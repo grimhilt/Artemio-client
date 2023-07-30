@@ -20,7 +20,7 @@ const Playlist = (item) => {
 
     const form = useForm({
         initialValues: {
-            files: [{ id: 0, name: 'stuff', seconds: 60 }],
+            files: [],
         },
     });
 
@@ -39,11 +39,13 @@ const Playlist = (item) => {
             API.getPlaylist(id)
                 .then((res) => {
                     if (res.status === 200) {
+                        console.log(res.data)
                         setPlaylist(res.data);
+                        form.setFieldValue('files', res.data.files);
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.response.data.error);
+                    setNotification(true, err.message);
                 });
 
             API.getFiles()
@@ -53,7 +55,7 @@ const Playlist = (item) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.response.data.error);
+                    setNotification(true, err.message);
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,8 +78,9 @@ const Playlist = (item) => {
                 </Button>
             </Group>
             <Paper p="xs" radius="sm" shadow="sm" withBorder my="md">
-                <Content form={form} />
+                <Content form={form} playlistId={id}/>
             </Paper>
+            <Button>Save</Button>
             <ModalUpdate open={update} handler={toggleUpdate} id={playlist?.id} />
         </>
     );

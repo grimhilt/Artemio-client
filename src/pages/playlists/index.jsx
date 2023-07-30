@@ -25,7 +25,7 @@ const Playlists = () => {
                 }
             })
             .catch((err) => {
-                setNotification(true, err.response.data.error);
+                setNotification(true, err.message);
             });
 
         return () => {};

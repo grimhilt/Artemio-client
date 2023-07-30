@@ -22,6 +22,13 @@ const API = {
     getFiles() {
         return caller().get('/file');
     },
+    addFileToPlaylist(playlistId, file) {
+        return caller().post(`/playlist/${playlistId}`, file);
+    },
+    playlistChangeOrder(playlistId, data) {
+        return caller().post(`/playlist/${playlistId}/order`, data);
+
+    }
 };
 
 export default API;
