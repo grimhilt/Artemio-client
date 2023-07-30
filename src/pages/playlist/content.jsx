@@ -1,4 +1,4 @@
-import { Box } from '@mantine/core';
+import { Box, Image, Flex } from '@mantine/core';
 import { DragDropContext, Draggable } from 'react-beautiful-dnd';
 import { IconGripVertical } from '@tabler/icons-react';
 import { StrictModeDroppable } from './StrictModeDroppable';
@@ -6,64 +6,93 @@ import { ActionIcon, Button, Center, Grid, Group, NumberInput, Paper, Text } fro
 import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import ModalFileSelector from '../files/file-selector';
+import API from '../../services/api';
+import setNotification from '../errors/error-notification';
 
-const Content = ({ form }) => {
+const Content = ({ form, playlistId }) => {
     console.log(form.values);
 
     const [fileSelector, setFileSelector] = useState(true);
     const toggleFileSelector = () => setFileSelector(!fileSelector);
 
     const handleAddFiles = (files) => {
+        console.log('handle add file');
+        console.log(files);
+        let formFiles = form.values.files;
+        let max_position = formFiles[formFiles.length - 1]?.position ?? 0;
         files.forEach((file) => {
+            max_position++;
+
+            file.position = max_position;
             file.seconds = 10;
             form.insertListItem('files', file);
+            API.addFileToPlaylist(playlistId, { position: file.position, file_id: file.id, seconds: file.seconds })
+                .then((res) => {
+                    if (res.status !== 200) {
+                        setNotification(true, `Error when adding file (${res.status})`);
+                    }
+                })
+                .catch((err) => {
+                    setNotification(true, err.message);
+                });
         });
     };
 
-    const handleDelete = (fileId) => {
-        console.log(form.values);
-        const index = form.values.files.findIndex((file) => file.id === fileId);
-        console.log(index, fileId);
-        if (index) {
-            form.removeListItem('files', index);
+    const changePositionValue = (from, to) => {
+        const formFiles = form.values.files;
+        let below_position = to === 0 ? 0 : formFiles[to].position;
+        let above_position = formFiles[to].position;
+        if (to > from) {
+            if (to === formFiles.length - 1) {
+                // last element so nothing above
+                above_position = formFiles.length + 1;
+            } else {
+                // not last to taking element above
+                above_position = formFiles[to + 1].position;
+            }
         }
+        let newPosition = (below_position + above_position) / 2
+        form.values.files[from].position = newPosition;
+
+        // sending modification to server
+        API.playlistChangeOrder(playlistId, {file_id: formFiles[from].id, position: newPosition})
+            .then((res) => {
+                if (res.status !== 200) {
+                    setNotification(true, `Error when changing order (${res.status})`);
+                }
+            })
+            .catch((err) => {
+                setNotification(true, err.message);
+            });
     };
 
-    const fields = form.values.files.map((el, index) => (
+    const handleDelete = (index) => {
+        form.removeListItem('files', index);
+    };
+
+    const fields = form.values.files.map((_, index) => (
         <Draggable key={index} index={index} draggableId={index.toString()}>
             {(provided) => (
-                <Center>
-                    <Group ref={provided.innerRef} mt="xs" {...provided.draggableProps}>
-                        <Center {...provided.dragHandleProps}>
-                            <IconGripVertical size="1.2rem" />
-                        </Center>
-                        <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs">
-                            <Grid columns={10}>
-                                <Grid.Col span={4}>
-                                    <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
-                                </Grid.Col>
-                                <Grid.Col span={4}>
-                                    <NumberInput
-                                        required
-                                        hideControls
-                                        description="Seconds to display"
-                                        {...form.getInputProps(`files.${index}.seconds`)}
-                                    />
-                                </Grid.Col>
-                                <Grid.Col span={2}>
-                                    <ActionIcon
-                                        color="red"
-                                        variant="light"
-                                        size="lg"
-                                        onClick={() => handleDelete(el.id)}
-                                    >
-                                        <IconTrash size="1rem" />
-                                    </ActionIcon>
-                                </Grid.Col>
-                            </Grid>
-                        </Paper>
-                    </Group>
-                </Center>
+                <Group ref={provided.innerRef} mt="xs" {...provided.draggableProps} position="center">
+                    <Center {...provided.dragHandleProps}>
+                        <IconGripVertical size="1.2rem" />
+                    </Center>
+                    <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
+                        <Flex direction="row" align="center" gap="lg" justify="flex-end">
+                            <Image height={100} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
+                            <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
+                            <NumberInput
+                                required
+                                hideControls
+                                description="Seconds to display"
+                                {...form.getInputProps(`files.${index}.seconds`)}
+                            />
+                            <ActionIcon color="red" variant="light" size="lg" onClick={() => handleDelete(index)}>
+                                <IconTrash size="1rem" />
+                            </ActionIcon>
+                        </Flex>
+                    </Paper>
+                </Group>
             )}
         </Draggable>
     ));
@@ -71,9 +100,10 @@ const Content = ({ form }) => {
     return (
         <Box mx="auto">
             <DragDropContext
-                onDragEnd={({ destination, source }) =>
-                    form.reorderListItem('files', { from: source.index, to: destination.index })
-                }
+                onDragEnd={({ destination, source }) => {
+                    changePositionValue(source.index, destination.index);
+                    form.reorderListItem('files', { from: source.index, to: destination.index });
+                }}
             >
                 <StrictModeDroppable droppableId="dnd-list" direction="vertical">
                     {(provided) => (
