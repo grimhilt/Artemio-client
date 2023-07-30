@@ -51,23 +51,37 @@ const Content = ({ form, playlistId }) => {
                 above_position = formFiles[to + 1].position;
             }
         }
-        let newPosition = (below_position + above_position) / 2
-        form.values.files[from].position = newPosition;
+        let newPosition = (below_position + above_position) / 2;
 
         // sending modification to server
-        API.playlistChangeOrder(playlistId, {file_id: formFiles[from].id, position: newPosition})
+        API.playlistChangeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
             .then((res) => {
                 if (res.status !== 200) {
+                    form.values.files[from].position = newPosition;
+                    return true;
+                } else {
+                    setNotification(true, `Error when changing order (${res.status})`);
+                    return false;
+                }
+            })
+            .catch((err) => {
+                setNotification(true, err.message);
+                return false;
+            });
+    };
+
+    const handleDelete = (index) => {
+        API.playlistRemoveFile(playlistId, { file_id: form.values.files[index].id })
+            .then((res) => {
+                if (res.status == 200) {
+                    form.removeListItem('files', index);
+                } else {
                     setNotification(true, `Error when changing order (${res.status})`);
                 }
             })
             .catch((err) => {
                 setNotification(true, err.message);
             });
-    };
-
-    const handleDelete = (index) => {
-        form.removeListItem('files', index);
     };
 
     const fields = form.values.files.map((_, index) => (
@@ -101,8 +115,11 @@ const Content = ({ form, playlistId }) => {
         <Box mx="auto">
             <DragDropContext
                 onDragEnd={({ destination, source }) => {
-                    changePositionValue(source.index, destination.index);
-                    form.reorderListItem('files', { from: source.index, to: destination.index });
+                    changePositionValue(source.index, destination.index).then((success) => {
+                        if (success) {
+                            form.reorderListItem('files', { from: source.index, to: destination.index });
+                        }
+                    });
                 }}
             >
                 <StrictModeDroppable droppableId="dnd-list" direction="vertical">

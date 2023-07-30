@@ -27,8 +27,10 @@ const API = {
     },
     playlistChangeOrder(playlistId, data) {
         return caller().post(`/playlist/${playlistId}/order`, data);
-
-    }
+    },
+    playlistRemoveFile(playlistId, data) {
+        return caller().post(`/playlist/${playlistId}/remove_file`, data);
+    },
 };
 
 export default API;
