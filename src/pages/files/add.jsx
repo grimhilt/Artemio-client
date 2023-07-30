@@ -29,7 +29,7 @@ const ModalAddFile = ({ opened, handler, addFiles }) => {
         API.upload(formData)
             .then((res) => {
                 if (res.status === 200) {
-                    validate(files);
+                    validate(res.data);
                 }
             })
             .catch((err) => {

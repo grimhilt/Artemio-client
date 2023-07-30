@@ -78,8 +78,8 @@ const HeaderSearch = () => {
                         {items}
                     </Group>
                     <SwitchToggle />
-                    <Tooltip label={'Connect'} withArrow color={color}>
-                        <ActionIcon variant="light" size="lg" onClick={logout} color={color}>
+                    <Tooltip label={'Connect'} withArrow>
+                        <ActionIcon variant="light" size="lg" onClick={logout}>
                             <IconUserOff size="1.2rem" stroke={1.5} />
                         </ActionIcon>
                     </Tooltip>

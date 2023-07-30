@@ -10,28 +10,34 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
     const [files, setFiles] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
     const [search, setSearch] = useState('');
-    let resfiless = [];
+    let resFiles = [];
 
     const toggleShowAdd = () => setShowAdd(!showAdd);
 
-    const clickHandler = (files) => {
+    const clickHandler = (file) => {
         if (props.multi) {
             // eslint-disable-next-line eqeqeq
-            const indexfiles = resfiless.findIndex((item) => item._id == files._id);
-            if (indexfiles === -1) {
-                resfiless.push(files);
+            const indexFile = resFiles.findIndex((item) => item.id == file.id);
+            if (indexFile === -1) {
+                resFiles.push(file);
             } else {
-                resfiless.splice(indexfiles, 1);
+                resFiles.splice(indexFile, 1);
             }
         } else {
-            handleSubmitLocal(files);
+            handleSubmitLocal(file);
         }
     };
 
-    const handleSubmitLocal = (files) => {
-        handleSubmit(props.multi ? resfiless : files);
+    const handleSubmitLocal = (file) => {
+        handleSubmit(props.multi ? resFiles : file);
         handleClose();
     };
+
+    const addFiles = (objects) => {
+        for(let i = 0; i < objects.length; i++) {
+            setFiles((prev) => [...prev, objects[i]]);
+        }
+    }
 
     useEffect(() => {
         API.getFiles()
@@ -41,7 +47,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                 }
             })
             .catch((err) => {
-                setNotification(true, err.response.data.error);
+                setNotification(true, err.message);
             });
 
         return () => {};
@@ -57,7 +63,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.response.data.error);
+                    setNotification(true, err.message);
                 });
         } else if (search.length === 0) {
             API.getFiles()
@@ -67,7 +73,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.response.data.error);
+                    setNotification(true, err.message);
                 });
         }
     }, [search]);
@@ -94,8 +100,8 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                     />
                     <ScrollArea h={430} offsetScrollbars>
                         <Grid columns={3}>
-                            {files.map((file) => (
-                                <SelectorItem file={file} clickHandler={clickHandler} key={file.id} />
+                            {files.map((file, index) => (
+                                <SelectorItem file={file} clickHandler={clickHandler} key={file.id+index} />
                             ))}
                         </Grid>
                     </ScrollArea>
@@ -118,7 +124,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                         <ModalAddFile
                             opened={showAdd}
                             handler={toggleShowAdd}
-                            addFiles={(files) => setFiles((prev) => [...prev, files])}
+                            addFiles={(files) => addFiles(files)}
                         />
                     )}
                 </Modal.Body>
