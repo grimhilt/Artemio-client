@@ -39,35 +39,37 @@ const Content = ({ form, playlistId }) => {
     };
 
     const changePositionValue = (from, to) => {
-        const formFiles = form.values.files;
-        let below_position = to === 0 ? 0 : formFiles[to].position;
-        let above_position = formFiles[to].position;
-        if (to > from) {
-            if (to === formFiles.length - 1) {
-                // last element so nothing above
-                above_position = formFiles.length + 1;
-            } else {
-                // not last to taking element above
-                above_position = formFiles[to + 1].position;
-            }
-        }
-        let newPosition = (below_position + above_position) / 2;
-
-        // sending modification to server
-        API.playlistChangeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
-            .then((res) => {
-                if (res.status !== 200) {
-                    form.values.files[from].position = newPosition;
-                    return true;
+        return new Promise((resolve, reject) => {
+            const formFiles = form.values.files;
+            let below_position = to === 0 ? 0 : formFiles[to].position;
+            let above_position = formFiles[to].position;
+            if (to > from) {
+                if (to === formFiles.length - 1) {
+                    // last element so nothing above
+                    above_position = formFiles.length + 1;
                 } else {
-                    setNotification(true, `Error when changing order (${res.status})`);
-                    return false;
+                    // not last to taking element above
+                    above_position = formFiles[to + 1].position;
                 }
-            })
-            .catch((err) => {
-                setNotification(true, err.message);
-                return false;
-            });
+            }
+            let newPosition = (below_position + above_position) / 2;
+
+            // sending modification to server
+            API.playlistChangeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
+                .then((res) => {
+                    if (res.status == 200) {
+                        form.values.files[from].position = newPosition;
+                        resolve(true);
+                    } else {
+                        setNotification(true, `Error when changing order (${res.status})`);
+                        resolve(false);
+                    }
+                })
+                .catch((err) => {
+                    setNotification(true, err.message);
+                    resolve(false);
+                });
+        });
     };
 
     const handleDelete = (index) => {
@@ -115,9 +117,10 @@ const Content = ({ form, playlistId }) => {
         <Box mx="auto">
             <DragDropContext
                 onDragEnd={({ destination, source }) => {
+                    form.reorderListItem('files', { from: source.index, to: destination.index });
                     changePositionValue(source.index, destination.index).then((success) => {
-                        if (success) {
-                            form.reorderListItem('files', { from: source.index, to: destination.index });
+                        if (!success) {
+                            form.reorderListItem('files', { from: destination.index, to: source.index });
                         }
                     });
                 }}
