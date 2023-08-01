@@ -59,7 +59,6 @@ const Playlist = (item) => {
             API.getPlaylist(id)
                 .then((res) => {
                     if (res.status === 200) {
-                        console.log(res.data);
                         setPlaylist(res.data);
                         form.setFieldValue('files', res.data.files);
                     }

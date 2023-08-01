@@ -4,7 +4,7 @@ import { IconGripVertical } from '@tabler/icons-react';
 import { StrictModeDroppable } from './StrictModeDroppable';
 import { ActionIcon, Button, Center, Grid, Group, NumberInput, Paper, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ModalFileSelector from '../files/file-selector';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
@@ -12,7 +12,7 @@ import setNotification from '../errors/error-notification';
 const Content = ({ form, playlistId }) => {
     console.log(form.values);
 
-    const [fileSelector, setFileSelector] = useState(true);
+    const [fileSelector, setFileSelector] = useState(false);
     const toggleFileSelector = () => setFileSelector(!fileSelector);
 
     const handleAddFiles = (files) => {
@@ -58,7 +58,6 @@ const Content = ({ form, playlistId }) => {
             API.playlistChangeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
                 .then((res) => {
                     if (res.status == 200) {
-                        form.values.files[from].position = newPosition;
                         resolve(true);
                     } else {
                         setNotification(true, `Error when changing order (${res.status})`);
@@ -70,6 +69,45 @@ const Content = ({ form, playlistId }) => {
                     resolve(false);
                 });
         });
+    };
+
+    const [timeout, setTimeout2] = useState();
+    const [originSecs, setOriginSecs] = useState();
+    const handleChangeSeconds = (seconds, index) => {
+        if (!originSecs) setOriginSecs(form.values.files[index].seconds);
+        changeSecsForm(seconds, index);
+        if (timeout) clearTimeout(timeout);
+        setTimeout2(setTimeout(() => changeSeconds(seconds, index), 1000));
+    };
+
+    const changeSecsForm = (seconds, index) => {
+        form.setFieldValue(
+            form.values.files.map((file, i) => {
+                if (index === i) {
+                    file.seconds = seconds;
+                    return seconds;
+                } else {
+                    return file;
+                }
+            })
+        );
+    };
+
+    const changeSeconds = (seconds, index) => {
+        const fileId = form.values.files[index].id;
+        API.playlistChangeSeconds(playlistId, { file_id: fileId, seconds: seconds })
+            .then((res) => {
+                if (res.status == 200) {
+                    setOriginSecs()
+                } else {
+                    setNotification(true, `Error when changing seconds (${res.status})`);
+                    changeSecsForm(originSecs, index);
+                }
+            })
+            .catch((err) => {
+                setNotification(true, err.message);
+                changeSecsForm(originSecs, index);
+            });
     };
 
     const handleDelete = (index) => {
@@ -98,7 +136,9 @@ const Content = ({ form, playlistId }) => {
                                 required
                                 hideControls
                                 description="Seconds to display"
-                                {...form.getInputProps(`files.${index}.seconds`)}
+                                value={form.getInputProps(`files.${index}.seconds`).value}
+                                onChange={(secs) => handleChangeSeconds(secs, index)}
+                                error={form.getInputProps(`files.${index}.seconds`).errors && 'This field is required'}
                             />
                             <ActionIcon color="red" variant="light" size="lg" onClick={() => handleDelete(index)}>
                                 <IconTrash size="1rem" />

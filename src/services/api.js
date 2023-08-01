@@ -37,6 +37,9 @@ const API = {
     playlistChangeOrder(playlistId, data) {
         return caller().post(`/playlist/${playlistId}/order`, data);
     },
+    playlistChangeSeconds(playlistId, data) {
+        return caller().post(`/playlist/${playlistId}/seconds`, data);
+    },
     playlistRemoveFile(playlistId, data) {
         return caller().post(`/playlist/${playlistId}/remove_file`, data);
     },
