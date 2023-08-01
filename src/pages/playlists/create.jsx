@@ -4,7 +4,10 @@ import API from '../../services/api';
 
 const ModalCreatePlaylist = ({ opened, handler, addPlaylist }) => {
     const validated = (item) => {
-        addPlaylist(item);
+        if (item) {
+            addPlaylist(item);
+        }
+        console.log("call handler")
         handler();
     };
 
