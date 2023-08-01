@@ -12,11 +12,27 @@ const Playlist = (item) => {
     const id = window.location.href.split('/').slice(-1)[0];
     const [playlist, setPlaylist] = useState(null);
     const [showUpdate, setShowUpdate] = useState(false);
-    const [addFile, setAddFile] = useState(false);
-    const [files, setFiles] = useState([]);
     const [duration, setDuration] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isActive, setIsActive] = useState(false);
 
     const toggleUpdate = () => setShowUpdate(!showUpdate);
+
+    const toggleActivate = () => {
+        setIsLoading(true);
+        (isActive ? API.disactivate : API.activate)(id)
+            .then((res) => {
+                if (res.status === 200) {
+                    setIsActive(!isActive);
+                    setNotification(false, `Playlist currently ${isActive ? 'inactive' : 'active'}`);
+                }
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                setNotification(true, err.message);
+                setIsLoading(false);
+            });
+    };
 
     const form = useForm({
         initialValues: {
@@ -51,16 +67,6 @@ const Playlist = (item) => {
                 .catch((err) => {
                     setNotification(true, err.message);
                 });
-
-            API.getFiles()
-                .then((res) => {
-                    if (res.status === 200) {
-                        setFiles(res.data);
-                    }
-                })
-                .catch((err) => {
-                    setNotification(true, err.message);
-                });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
@@ -77,9 +83,20 @@ const Playlist = (item) => {
                         {parseTime(duration)}
                     </Text>
                 </Text>
-                <Button variant="light" mt="sm" onClick={toggleUpdate}>
-                    Edit
-                </Button>
+                <Group>
+                    <Button
+                        variant="light"
+                        mt="sm"
+                        color={isActive ? 'red' : 'green'}
+                        onClick={toggleActivate}
+                        loading={isLoading}
+                    >
+                        {isActive ? 'Stop' : 'Activate'}
+                    </Button>
+                    <Button variant="light" mt="sm" onClick={toggleUpdate}>
+                        Edit
+                    </Button>
+                </Group>
             </Group>
             <Paper p="xs" radius="sm" shadow="sm" withBorder my="md">
                 <Content form={form} playlistId={id} />

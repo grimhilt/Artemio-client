@@ -16,6 +16,12 @@ const API = {
     updatePlaylist(playlistId, data) {
         return caller().post(`/playlist/${playlistId}/update`, data);
     },
+    activate(playlistId) {
+        return caller().post(`/playlist/${playlistId}/activate`);
+    },
+    disactivate(playlistId) {
+        return caller().post(`/playlist/${playlistId}/disactivate`);
+    },
     getPlaylist(id) {
         return caller().get(`/playlist/${id}`);
     },
