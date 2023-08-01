@@ -9,7 +9,7 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     };
 
     const [isLoading, setIsLoading] = useState(false);
-
+    console.log(item);
     // todo permissions
     const form = useForm({
         initialValues: {
@@ -25,14 +25,10 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
         if (form.validate().hasErrors) return;
         try {
             setIsLoading(true);
-           
-            if (item) {
-                form.values.id = item?.id;
-            }
-            
-            const res = await APICall(form.values);
+            const res = await APICall(item?.id, { name: form.values.name });
             setIsLoading(false);
-            handleClose(res.data);
+            item.name = form.values.name;
+            handleClose(item);
         } catch (error) {
             setIsLoading(false);
             // todo

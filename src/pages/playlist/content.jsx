@@ -90,13 +90,10 @@ const Content = ({ form, playlistId }) => {
         <Draggable key={index} index={index} draggableId={index.toString()}>
             {(provided) => (
                 <Group ref={provided.innerRef} mt="xs" {...provided.draggableProps} position="center">
-                    <Center {...provided.dragHandleProps}>
-                        <IconGripVertical size="1.2rem" />
-                    </Center>
                     <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
                         <Flex direction="row" align="center" gap="lg" justify="flex-end">
-                            <Image height={100} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
                             <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
+                            <Image width={150} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
                             <NumberInput
                                 required
                                 hideControls
@@ -108,13 +105,16 @@ const Content = ({ form, playlistId }) => {
                             </ActionIcon>
                         </Flex>
                     </Paper>
+                    <Center {...provided.dragHandleProps}>
+                        <IconGripVertical size="1.2rem" />
+                    </Center>
                 </Group>
             )}
         </Draggable>
     ));
 
     return (
-        <Box mx="auto">
+        <Box mx="auto" maw={1200}>
             <DragDropContext
                 onDragEnd={({ destination, source }) => {
                     form.reorderListItem('files', { from: source.index, to: destination.index });

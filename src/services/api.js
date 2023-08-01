@@ -13,6 +13,9 @@ const API = {
     createPlaylist(data) {
         return caller().put('/playlist', data);
     },
+    updatePlaylist(playlistId, data) {
+        return caller().post(`/playlist/${playlistId}/update`, data);
+    },
     getPlaylist(id) {
         return caller().get(`/playlist/${id}`);
     },

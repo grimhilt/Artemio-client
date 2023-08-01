@@ -11,12 +11,12 @@ import Content from './content';
 const Playlist = (item) => {
     const id = window.location.href.split('/').slice(-1)[0];
     const [playlist, setPlaylist] = useState(null);
-    const [update, setUpdate] = useState(false);
+    const [showUpdate, setShowUpdate] = useState(false);
     const [addFile, setAddFile] = useState(false);
     const [files, setFiles] = useState([]);
     const [duration, setDuration] = useState(0);
 
-    const toggleUpdate = () => setUpdate(!update);
+    const toggleUpdate = () => setShowUpdate(!showUpdate);
 
     const form = useForm({
         initialValues: {
@@ -32,6 +32,10 @@ const Playlist = (item) => {
         setDuration(duration);
     }, [form.values]);
 
+    const updatePlaylist = (playlist) => {
+        setPlaylist(playlist);
+    };
+
     useEffect(() => {
         if (JSON.stringify(item) !== '{}') {
             setPlaylist(item);
@@ -39,7 +43,7 @@ const Playlist = (item) => {
             API.getPlaylist(id)
                 .then((res) => {
                     if (res.status === 200) {
-                        console.log(res.data)
+                        console.log(res.data);
                         setPlaylist(res.data);
                         form.setFieldValue('files', res.data.files);
                     }
@@ -78,10 +82,14 @@ const Playlist = (item) => {
                 </Button>
             </Group>
             <Paper p="xs" radius="sm" shadow="sm" withBorder my="md">
-                <Content form={form} playlistId={id}/>
+                <Content form={form} playlistId={id} />
             </Paper>
-            <Button>Save</Button>
-            <ModalUpdate open={update} handler={toggleUpdate} id={playlist?.id} />
+            <ModalUpdate
+                opened={showUpdate}
+                handler={toggleUpdate}
+                item={playlist}
+                updatePlaylist={(playlist) => updatePlaylist(playlist)}
+            />
         </>
     );
 };
