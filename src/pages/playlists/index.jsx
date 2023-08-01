@@ -3,6 +3,7 @@ import NavbarSignage from '../../components/navbar';
 import PlaylistTable from './playlist-table';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
+import ModalCreatePlaylist from './create';
 
 const Playlists = () => {
     const [showCreate, setShowCreate] = useState(false);
@@ -38,6 +39,10 @@ const Playlists = () => {
         setPage((prev) => prev + limit);
     };
 
+    const addPlaylist = (playlist) => {
+        setPlaylist((prev) => [...prev, playlist]);
+    };
+
     const navbar = {
         title: 'Playlists',
         search: search,
@@ -58,6 +63,11 @@ const Playlists = () => {
                 onDelete={(id) => setPlaylist(playlists.filter((item) => item._id != id))}
                 updateHandler={toggleModalUpdate}
                 loadMore={loadMore}
+            />
+            <ModalCreatePlaylist
+                opened={showCreate}
+                handler={toggleModalCreate}
+                addPlaylist={(playlist) => addPlaylist(playlist)}
             />
         </>
     );

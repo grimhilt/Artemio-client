@@ -22,7 +22,7 @@ const Files = () => {
                 }
             })
             .catch((err) => {
-                setNotification(true, err.response.data.error);
+                setNotification(true, err.message);
             });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
