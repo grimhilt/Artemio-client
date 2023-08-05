@@ -5,7 +5,6 @@ import { useState } from 'react';
 const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     const handleClose = (playlist) => {
         form.reset();
-        console.log('call jiezf');
         handler(playlist);
     };
 

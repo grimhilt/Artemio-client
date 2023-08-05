@@ -54,7 +54,7 @@ const links = [
 
 const HeaderSearch = () => {
     const { classes } = useStyles();
-    const { role } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const items = links.map((link) => (
@@ -78,9 +78,13 @@ const HeaderSearch = () => {
                         {items}
                     </Group>
                     <SwitchToggle />
-                    <Tooltip label={'Connect'} withArrow>
+                    <Tooltip label={user ? 'Logout' : 'Connect'} withArrow>
                         <ActionIcon variant="light" size="lg" onClick={logout}>
-                            <IconUserOff size="1.2rem" stroke={1.5} />
+                            {user ? (
+                                <IconUserCheck size="1.2rem" stroke={1.5} />
+                            ) : (
+                                <IconUserOff size="1.2rem" stroke={1.5} />
+                            )}
                         </ActionIcon>
                     </Tooltip>
                 </Group>

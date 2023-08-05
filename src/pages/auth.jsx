@@ -2,32 +2,50 @@ import { TextInput, PasswordInput, Checkbox, Anchor, Paper, Title, Container, Gr
 import { isNotEmpty, useForm } from '@mantine/form';
 import { useAuth } from '../tools/auth-provider';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import setNotification from './errors/error-notification';
+import API from '../services/api';
 
 const Authentication = () => {
-    const { setRole } = useAuth();
+    const { user, setUser } = useAuth();
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (user) navigate('/');
+    }, [user]);
+
     const form = useForm({
         initialValues: {
-            name: '',
+            login: '',
             password: '',
             remember: false,
         },
         validate: {
-            name: isNotEmpty('Name is required'),
+            login: isNotEmpty('Login is required'),
             password: isNotEmpty('Password is required'),
         },
     });
 
-    useEffect(() => {
-        localStorage.setItem('role', form.values.name);
-    }, [form.values.name]);
-
     const handleLogin = (e) => {
         e.preventDefault();
         if (form.validate().hasErrors) return;
-        setRole(form.values.name);
-        navigate('/');
+        setIsLoading(true);
+        API.login(form.values)
+            .then((res) => {
+                if (res.status === 200) {
+                    setUser(res.data);
+                    localStorage.setItem('user', res.data);
+                    navigate('/');
+                } else {
+                    setNotification(true, res.message);
+                    setIsLoading(false);
+                }
+            })
+            .catch((err) => {
+                setNotification(true, err.message);
+                setIsLoading(false);
+            });
     };
 
     return (
@@ -41,7 +59,7 @@ const Authentication = () => {
 
             <Paper withBorder shadow="md" p={30} mt={30} radius="md">
                 <form onSubmit={handleLogin}>
-                    <TextInput label="Name" placeholder="Your name" {...form.getInputProps('name')} withAsterisk />
+                    <TextInput label="Login" placeholder="Your login" {...form.getInputProps('login')} withAsterisk />
                     <PasswordInput
                         label="Password"
                         placeholder="Your password"
@@ -51,11 +69,11 @@ const Authentication = () => {
                     />
                     <Group position="apart" mt="lg">
                         <Checkbox label="Remember me" />
-                        <Anchor size="sm" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs">
+                        <Anchor size="sm" href="">
                             Forgot password(s)?
                         </Anchor>
                     </Group>
-                    <Button fullWidth mt="xl" type="submit">
+                    <Button fullWidth mt="xl" type="submit" loading={isLoading}>
                         Sign in
                     </Button>
                 </form>

@@ -7,11 +7,14 @@ const caller = (url = '/api') => {
 };
 
 const API = {
+    login(data) {
+        return caller().post('/auth/login', data);
+    },
     listPlaylists(data) {
         return caller().get('/playlist', data);
     },
     createPlaylist(data) {
-        return caller().put('/playlist', data);
+        return caller().post('/playlist', data);
     },
     updatePlaylist(playlistId, data) {
         return caller().post(`/playlist/${playlistId}/update`, data);

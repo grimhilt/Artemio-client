@@ -3,13 +3,13 @@ import { createContext, useState, useContext } from 'react';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const [role, setRole] = useState(localStorage.getItem('role') ?? 'user');
+    const [user, setUser] = useState(localStorage.getItem('user'));
 
-    return <AuthContext.Provider value={{ role, setRole }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
 };
 
 const logout = () => {
-    localStorage.removeItem('role');
+    localStorage.removeItem('user');
     window.location.href = '/auth';
 };
 
