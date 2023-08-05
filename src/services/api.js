@@ -7,6 +7,9 @@ const caller = (url = '/api') => {
 };
 
 const API = {
+    logout() {
+        return caller().post('/auth/logout');
+    },
     login(data) {
         return caller().post('/auth/login', data);
     },

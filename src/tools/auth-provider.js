@@ -1,4 +1,5 @@
 import { createContext, useState, useContext } from 'react';
+import API from '../services/api';
 
 const AuthContext = createContext();
 
@@ -11,6 +12,7 @@ const AuthProvider = ({ children }) => {
 const logout = () => {
     localStorage.removeItem('user');
     window.location.href = '/auth';
+    API.logout();
 };
 
 const useAuth = () => useContext(AuthContext);
