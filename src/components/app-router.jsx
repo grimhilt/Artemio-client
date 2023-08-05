@@ -6,15 +6,16 @@ import Playlists from '../pages/playlists';
 import Playlist from '../pages/playlist';
 import Files from '../pages/files';
 import Authentication from '../pages/auth';
+import { LoginRequired } from '../tools/grant-access';
 
 const AppRouter = () => {
     return (
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/planning" element={<Planning />} />
-            <Route path="/playlists" element={<Playlists />} />
-            <Route path="/files" element={<Files />} />
-            <Route path="/playlist/:id" element={<Playlist />} />
+            <Route path="/planning" element={<LoginRequired children={<Planning />} />} />
+            <Route path="/playlists" element={<LoginRequired children={<Playlists />} />} />
+            <Route path="/files" element={<LoginRequired children={<Files />} />} />
+            <Route path="/playlist/:id" element={<LoginRequired children={<Playlist />} />} />
             <Route path="/auth" element={<Authentication />} />
             <Route path="*" element={<NotFound />} />
         </Routes>

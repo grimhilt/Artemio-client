@@ -6,10 +6,11 @@ import { useEffect, useState } from 'react';
 import setNotification from './errors/error-notification';
 import API from '../services/api';
 
-const Authentication = () => {
+const Authentication = ({ redirect }) => {
     const { user, setUser } = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
         if (user) navigate('/');
@@ -36,7 +37,11 @@ const Authentication = () => {
                 if (res.status === 200) {
                     setUser(res.data);
                     localStorage.setItem('user', res.data);
-                    navigate('/');
+                    if (redirect) {
+                        setLoggedIn(true);
+                    } else {
+                        navigate('/');
+                    }
                 } else {
                     setNotification(true, res.message);
                     setIsLoading(false);
@@ -47,6 +52,8 @@ const Authentication = () => {
                 setIsLoading(false);
             });
     };
+
+    if (loggedIn) return redirect;
 
     return (
         <Container size={420} my={40}>
