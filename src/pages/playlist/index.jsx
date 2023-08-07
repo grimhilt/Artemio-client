@@ -7,6 +7,7 @@ import ModalUpdate from '../playlists/update';
 import { useForm } from '@mantine/form';
 import Content from './content';
 import { useNavigate } from 'react-router-dom';
+import GrantAccess, { Perm } from '../../tools/grant-access';
 
 const Playlist = (item) => {
     const id = window.location.href.split('/').slice(-1)[0];
@@ -68,6 +69,8 @@ const Playlist = (item) => {
                     setNotification(true, err);
                     if (err.response.status === 404) {
                         navigate('/playlists');
+                    } else if (err.response.status === 401) {
+                        navigate('/login');
                     }
                 });
         }
@@ -87,18 +90,30 @@ const Playlist = (item) => {
                     </Text>
                 </Text>
                 <Group>
-                    <Button
-                        variant="light"
-                        mt="sm"
-                        color={isActive ? 'red' : 'green'}
-                        onClick={toggleActivate}
-                        loading={isLoading}
-                    >
-                        {isActive ? 'Stop' : 'Activate'}
-                    </Button>
-                    <Button variant="light" mt="sm" onClick={toggleUpdate}>
-                        Edit
-                    </Button>
+                    <GrantAccess
+                        roles={[Perm.OWN_PLAYLIST, Perm.ACTIVATE_PLAYLIST]}
+                        item={playlist}
+                        children={
+                            <Button
+                                variant="light"
+                                mt="sm"
+                                color={isActive ? 'red' : 'green'}
+                                onClick={toggleActivate}
+                                loading={isLoading}
+                            >
+                                {isActive ? 'Stop' : 'Activate'}
+                            </Button>
+                        }
+                    />
+                    <GrantAccess
+                        role={Perm.OWN_PLAYLIST}
+                        item={playlist}
+                        children={
+                            <Button variant="light" mt="sm" onClick={toggleUpdate}>
+                                Edit
+                            </Button>
+                        }
+                    />
                 </Group>
             </Group>
             <Paper p="xs" radius="sm" shadow="sm" withBorder my="md">

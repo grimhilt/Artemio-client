@@ -25,6 +25,7 @@ const Content = ({ form, playlistId }) => {
 
             file.position = max_position;
             file.seconds = 10;
+            const index = form.values.files.length;
             form.insertListItem('files', file);
             API.addFileToPlaylist(playlistId, { position: file.position, file_id: file.id, seconds: file.seconds })
                 .then((res) => {
@@ -33,6 +34,8 @@ const Content = ({ form, playlistId }) => {
                     }
                 })
                 .catch((err) => {
+                    console.log("here")
+                    form.removeListItem('files', index)
                     setNotification(true, err);
                 });
         });
