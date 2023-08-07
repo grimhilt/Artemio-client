@@ -2,9 +2,9 @@ import { Box, Image, Flex } from '@mantine/core';
 import { DragDropContext, Draggable } from 'react-beautiful-dnd';
 import { IconGripVertical } from '@tabler/icons-react';
 import { StrictModeDroppable } from './StrictModeDroppable';
-import { ActionIcon, Button, Center, Grid, Group, NumberInput, Paper, Text } from '@mantine/core';
+import { ActionIcon, Button, Center, Group, NumberInput, Paper, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ModalFileSelector from '../files/file-selector';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
@@ -33,7 +33,7 @@ const Content = ({ form, playlistId }) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.message);
+                    setNotification(true, err);
                 });
         });
     };
@@ -57,7 +57,7 @@ const Content = ({ form, playlistId }) => {
             // sending modification to server
             API.playlistChangeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
                 .then((res) => {
-                    if (res.status == 200) {
+                    if (res.status === 200) {
                         resolve(true);
                     } else {
                         setNotification(true, `Error when changing order (${res.status})`);
@@ -65,7 +65,7 @@ const Content = ({ form, playlistId }) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.message);
+                    setNotification(true, err);
                     resolve(false);
                 });
         });
@@ -97,15 +97,15 @@ const Content = ({ form, playlistId }) => {
         const fileId = form.values.files[index].id;
         API.playlistChangeSeconds(playlistId, { file_id: fileId, seconds: seconds })
             .then((res) => {
-                if (res.status == 200) {
-                    setOriginSecs()
+                if (res.status === 200) {
+                    setOriginSecs();
                 } else {
                     setNotification(true, `Error when changing seconds (${res.status})`);
                     changeSecsForm(originSecs, index);
                 }
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
                 changeSecsForm(originSecs, index);
             });
     };
@@ -113,14 +113,14 @@ const Content = ({ form, playlistId }) => {
     const handleDelete = (index) => {
         API.playlistRemoveFile(playlistId, { file_id: form.values.files[index].id })
             .then((res) => {
-                if (res.status == 200) {
+                if (res.status === 200) {
                     form.removeListItem('files', index);
                 } else {
                     setNotification(true, `Error when changing order (${res.status})`);
                 }
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
             });
     };
 

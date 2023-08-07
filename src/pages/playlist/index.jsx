@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import API from '../../services/api';
 import { parseTime } from '../../tools/timeUtil';
 import setNotification from '../errors/error-notification';
-import GrantAccess from '../../tools/grant-access';
 import ModalUpdate from '../playlists/update';
 import { useForm } from '@mantine/form';
 import Content from './content';
+import { useNavigate } from 'react-router-dom';
 
 const Playlist = (item) => {
     const id = window.location.href.split('/').slice(-1)[0];
@@ -15,6 +15,7 @@ const Playlist = (item) => {
     const [duration, setDuration] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isActive, setIsActive] = useState(false);
+    const navigate = useNavigate();
 
     const toggleUpdate = () => setShowUpdate(!showUpdate);
 
@@ -29,7 +30,7 @@ const Playlist = (item) => {
                 setIsLoading(false);
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
                 setIsLoading(false);
             });
     };
@@ -64,7 +65,10 @@ const Playlist = (item) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.message);
+                    setNotification(true, err);
+                    if (err.response.status === 404) {
+                        navigate('/playlists');
+                    }
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

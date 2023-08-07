@@ -4,11 +4,13 @@ import PlaylistTable from './playlist-table';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
 import ModalCreatePlaylist from './create';
+import { Button } from '@mantine/core';
+import GrantAccess, { Perm } from '../../tools/grant-access';
 
 const Playlists = () => {
     const [showCreate, setShowCreate] = useState(false);
     const [showUpdate, setShowUpdate] = useState(false);
-    const [item, setItem] = useState({});
+    const [, setItem] = useState({});
     const [page, setPage] = useState(0);
     const limit = 6;
 
@@ -18,6 +20,10 @@ const Playlists = () => {
     const [playlists, setPlaylist] = useState([]);
 
     useEffect(() => {
+        console.log('profile');
+        API.profile()
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
         API.listPlaylists(limit, page)
             .then((res) => {
                 if (res.status === 200) {
@@ -26,7 +32,7 @@ const Playlists = () => {
                 }
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
             });
 
         return () => {};
@@ -47,10 +53,12 @@ const Playlists = () => {
         title: 'Playlists',
         search: search,
         handlerChange: (e) => setSearch(e.target.value),
-        buttonCreate: {
-            text: 'New Playlist',
-            handler: toggleModalCreate,
-        },
+        buttonCreate: (
+            <GrantAccess
+                role={Perm.CREATE_PLAYLIST}
+                children={<Button onClick={toggleModalCreate}>New Playlist</Button>}
+            />
+        ),
     };
 
     return (
@@ -58,7 +66,7 @@ const Playlists = () => {
             <NavbarSignage data={navbar} />
             <PlaylistTable
                 data={playlists}
-                updateItem={setItem}
+                updateItem={setItem} // todo
                 // eslint-disable-next-line eqeqeq
                 onDelete={(id) => setPlaylist(playlists.filter((item) => item._id != id))}
                 updateHandler={toggleModalUpdate}

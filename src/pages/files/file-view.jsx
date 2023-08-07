@@ -1,16 +1,14 @@
-import { Card, Divider, Text, Title, Image, Badge, Button, Group } from '@mantine/core';
-
-import API from '../../services/api';
+import { Card, Text, Image, Button, Group } from '@mantine/core';
 
 const FileView = ({ file, onSelect, onDelete, ...props }) => {
-    const deleteHandler = async () => {
-        try {
-            await API.deleteFile(file.id);
-            onDelete(file.id);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    // const deleteHandler = async () => {
+    //     try {
+    //         await API.deleteFile(file.id);
+    //         onDelete(file.id);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
 
     return (
         <Card shadow="sm" padding="md" withBorder>

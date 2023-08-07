@@ -1,7 +1,7 @@
 import Logo from '../assets/logo.png';
 import { Avatar, createStyles, Header, Group, rem, UnstyledButton, Title, ActionIcon, Tooltip } from '@mantine/core';
 import SwitchToggle from './toggle-colorscheme';
-import { IconUserCheck, IconUserEdit, IconUserOff } from '@tabler/icons-react';
+import { IconUserCheck, IconUserOff } from '@tabler/icons-react';
 import { logout, useAuth } from '../tools/auth-provider';
 import { useNavigate } from 'react-router-dom';
 

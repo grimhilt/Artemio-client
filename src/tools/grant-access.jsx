@@ -9,9 +9,26 @@ export const Perm = {
     EDIT_PLAYLIST: 4,
 };
 
-const GrantAccess = ({ roles, children }) => {
+const checkPerm = (perm, user) => {
+    console.log(user);
+    switch (perm) {
+        case Perm.CREATE_ROLE:
+            return false;
+        case Perm.CREATE_PLAYLIST:
+            return user.roles.findIndex((role) => role.can_create_playlist) !== -1;
+        default:
+            return false;
+    }
+};
+
+const GrantAccess = ({ role, roles, children }) => {
     const { user } = useAuth();
-    return roles.includes(user) ? children : null;
+    if (role && checkPerm(role, user)) {
+        return children;
+    } else if (roles && roles.includes(user)) {
+        return children;
+    }
+    return null;
 };
 
 export const LoginRequired = ({ children }) => {

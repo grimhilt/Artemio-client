@@ -3,15 +3,24 @@ import API from '../services/api';
 
 const AuthContext = createContext();
 
+const getUserFromStorage = () => {
+    const user = localStorage.getItem('user');
+    if (user) {
+        return JSON.parse(user);
+    } else {
+        return;
+    }
+};
+
 const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(localStorage.getItem('user'));
+    const [user, setUser] = useState(getUserFromStorage());
 
     return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
 };
 
 const logout = () => {
     localStorage.removeItem('user');
-    window.location.href = '/auth';
+    window.location.href = '/login';
     API.logout();
 };
 

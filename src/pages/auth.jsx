@@ -14,6 +14,7 @@ const Authentication = ({ redirect }) => {
 
     useEffect(() => {
         if (user) navigate('/');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const form = useForm({
@@ -36,19 +37,19 @@ const Authentication = ({ redirect }) => {
             .then((res) => {
                 if (res.status === 200) {
                     setUser(res.data);
-                    localStorage.setItem('user', res.data);
+                    localStorage.setItem('user', JSON.stringify(res.data));
                     if (redirect) {
                         setLoggedIn(true);
                     } else {
                         navigate('/');
                     }
                 } else {
-                    setNotification(true, res.message);
+                    setNotification(true, res);
                     setIsLoading(false);
                 }
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
                 setIsLoading(false);
             });
     };

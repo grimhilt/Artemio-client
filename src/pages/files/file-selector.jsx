@@ -47,7 +47,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                 }
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
             });
 
         return () => {};
@@ -63,7 +63,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.message);
+                    setNotification(true, err);
                 });
         } else if (search.length === 0) {
             API.getFiles()
@@ -73,7 +73,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                     }
                 })
                 .catch((err) => {
-                    setNotification(true, err.message);
+                    setNotification(true, err);
                 });
         }
     }, [search]);

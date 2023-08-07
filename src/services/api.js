@@ -7,6 +7,9 @@ const caller = (url = '/api') => {
 };
 
 const API = {
+    profile() {
+        return caller().get('/auth/profile');
+    },
     logout() {
         return caller().post('/auth/logout');
     },
@@ -14,22 +17,22 @@ const API = {
         return caller().post('/auth/login', data);
     },
     listPlaylists(data) {
-        return caller().get('/playlist', data);
+        return caller().get('/playlists', data);
     },
     createPlaylist(data) {
-        return caller().post('/playlist', data);
+        return caller().post('/playlists', data);
     },
     updatePlaylist(playlistId, data) {
-        return caller().post(`/playlist/${playlistId}/update`, data);
+        return caller().post(`/playlists/${playlistId}/update`, data);
     },
     activate(playlistId) {
-        return caller().post(`/playlist/${playlistId}/activate`);
+        return caller().post(`/playlists/${playlistId}/activate`);
     },
     disactivate(playlistId) {
-        return caller().post(`/playlist/${playlistId}/disactivate`);
+        return caller().post(`/playlists/${playlistId}/disactivate`);
     },
     getPlaylist(id) {
-        return caller().get(`/playlist/${id}`);
+        return caller().get(`/playlists/${id}`);
     },
     upload(data) {
         return caller().post('/file', data);
@@ -38,16 +41,16 @@ const API = {
         return caller().get('/file');
     },
     addFileToPlaylist(playlistId, file) {
-        return caller().post(`/playlist/${playlistId}`, file);
+        return caller().post(`/playlists/${playlistId}`, file);
     },
     playlistChangeOrder(playlistId, data) {
-        return caller().post(`/playlist/${playlistId}/order`, data);
+        return caller().post(`/playlists/${playlistId}/order`, data);
     },
     playlistChangeSeconds(playlistId, data) {
-        return caller().post(`/playlist/${playlistId}/seconds`, data);
+        return caller().post(`/playlists/${playlistId}/seconds`, data);
     },
     playlistRemoveFile(playlistId, data) {
-        return caller().post(`/playlist/${playlistId}/remove_file`, data);
+        return caller().post(`/playlists/${playlistId}/remove_file`, data);
     },
 };
 

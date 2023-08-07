@@ -1,4 +1,4 @@
-import { Title, Button, Group, Input, Paper } from '@mantine/core';
+import { Title, Group, Input, Paper } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 
 const NavbarSignage = ({ data }) => {
@@ -13,9 +13,7 @@ const NavbarSignage = ({ data }) => {
                         onChange={(event) => data.handlerChange(event)}
                         icon={<IconSearch size="1rem" stroke={1.5} />}
                     />
-                    {data?.buttonCreate && (
-                        <Button onClick={data.buttonCreate.handler}>{data.buttonCreate.text}</Button>
-                    )}
+                    {data?.buttonCreate}
                 </Group>
             </Group>
         </Paper>

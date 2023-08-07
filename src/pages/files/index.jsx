@@ -1,4 +1,4 @@
-import { Button, Paper, Grid, Text, Title, Group, List, Image, ScrollArea, Center } from '@mantine/core';
+import { Button, Paper, Grid, Title, Group, ScrollArea, Center } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
@@ -22,7 +22,7 @@ const Files = () => {
                 }
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
             });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

@@ -1,6 +1,7 @@
 import { Button, TextInput, Group } from '@mantine/core';
 import { useForm, isNotEmpty } from '@mantine/form';
 import { useState } from 'react';
+import setNotification from '../errors/error-notification';
 
 const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     const handleClose = (playlist) => {
@@ -34,9 +35,10 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
                 handleClose(res.data);
             }
             setIsLoading(false);
-        } catch (error) {
+        } catch (err) {
+            console.log(err)
             setIsLoading(false);
-            // todo
+            setNotification(true, err);
         }
     };
 

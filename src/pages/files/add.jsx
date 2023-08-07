@@ -33,7 +33,7 @@ const ModalAddFile = ({ opened, handler, addFiles }) => {
                 }
             })
             .catch((err) => {
-                setNotification(true, err.message);
+                setNotification(true, err);
                 setIsLoading(false);
             });
     };

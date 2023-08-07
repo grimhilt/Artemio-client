@@ -16,7 +16,7 @@ const AppRouter = () => {
             <Route path="/playlists" element={<LoginRequired children={<Playlists />} />} />
             <Route path="/files" element={<LoginRequired children={<Files />} />} />
             <Route path="/playlist/:id" element={<LoginRequired children={<Playlist />} />} />
-            <Route path="/auth" element={<Authentication />} />
+            <Route path="/login" element={<Authentication />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );
