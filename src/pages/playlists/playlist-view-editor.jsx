@@ -1,7 +1,8 @@
-import { Button, TextInput, Group } from '@mantine/core';
+import { Button, TextInput, Group, Stack } from '@mantine/core';
 import { useForm, isNotEmpty } from '@mantine/form';
 import { useState } from 'react';
 import setNotification from '../errors/error-notification';
+import RoleSelector from './role-selector';
 
 const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     const handleClose = (playlist) => {
@@ -10,8 +11,9 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     };
 
     const [isLoading, setIsLoading] = useState(false);
-    console.log(item);
-    // todo permissions
+    const [rolesView, setRolesView] = useState([]);
+    const [rolesEdit, setRolesEdit] = useState([]);
+
     const form = useForm({
         initialValues: {
             name: item?.name ?? '',
@@ -28,15 +30,17 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
             setIsLoading(true);
             if (item) {
                 await APICall(item?.id, { name: form.values.name });
+                // todo permissions
                 item.name = form.values.name;
                 handleClose(item);
             } else {
-                const res = await APICall({ name: form.values.name });
+                const view = rolesView.map((roleId) => parseInt(roleId));
+                const edit = rolesEdit.map((roleId) => parseInt(roleId));
+                const res = await APICall({ name: form.values.name, view: view, edit: edit });
                 handleClose(res.data);
             }
             setIsLoading(false);
         } catch (err) {
-            console.log(err)
             setIsLoading(false);
             setNotification(true, err);
         }
@@ -45,6 +49,10 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     return (
         <form onSubmit={handleSubmit}>
             <TextInput label="Name" placeholder="Name" withAsterisk {...form.getInputProps('name')} mb="sm" />
+            <Stack>
+                <RoleSelector label="View Permission" value={rolesView} setValue={setRolesView} />
+                <RoleSelector label="Edit Permission" value={rolesEdit} setValue={setRolesEdit} />
+            </Stack>
             <Group position="right" mt="md">
                 <Button variant="light" color="red" onClick={handleClose}>
                     Cancel

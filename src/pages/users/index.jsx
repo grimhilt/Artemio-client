@@ -79,7 +79,7 @@ const Users = () => {
                     setItemToUse(item);
                     toggleModalView();
                 }}
-                deleteUser={(id) => setUsers(users.filter((item) => item.id != id))}
+                deleteUser={(id) => setUsers(users.filter((item) => item.id !== id))}
                 updateHandler={toggleModalUpdate}
             />
             <ModalUserEditor

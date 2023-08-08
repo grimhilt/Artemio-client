@@ -43,6 +43,13 @@ const API = {
         list(data) {
             return caller().get('/roles', data);
         },
+        search(search) {
+            if (search === "") {
+                return API.roles.list()
+            } else {
+                return caller().get(`/roles/${search}`);
+            }
+        },
     },
     users: {
         create(data) {
