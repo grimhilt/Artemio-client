@@ -61,6 +61,9 @@ const API = {
     createUser(data) {
         return caller().post('/users', data);
     },
+    deleteUser(userId) {
+        return caller().delete(`/users/${userId}`);
+    },
 };
 
 export default API;

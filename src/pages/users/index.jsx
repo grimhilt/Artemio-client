@@ -16,6 +16,7 @@ const Users = () => {
     const toggleModalUpdate = () => setShowUpdate(!showUpdate);
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     useEffect(() => {
         API.listUsers()
@@ -68,23 +69,22 @@ const Users = () => {
             <UserTable
                 data={users}
                 updateItem={(item) => {
-                    console.log(item);
                     setItemToUpdate(item);
                     toggleModalUpdate();
                 }}
-                onDelete={(id) => setUsers(users.filter((item) => item.id != id))}
+                deleteUser={(id) => setUsers(users.filter((item) => item.id != id))}
                 updateHandler={toggleModalUpdate}
             />
             <ModalUserEditor
                 opened={showCreate}
-                handler={(item) => updateUser(item)}
+                handler={(item) => addUser(item)}
                 handlerClose={toggleModalCreate}
                 APICall={API.createUser}
                 name="Create"
             />
             <ModalUserEditor
                 opened={showUpdate}
-                handler={(item) => addUser(item)}
+                handler={(item) => updateUser(item)}
                 handlerClose={toggleModalUpdate}
                 APICall={API.updateUser}
                 item={itemToUpdate}
