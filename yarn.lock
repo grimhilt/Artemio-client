@@ -1789,6 +1789,13 @@
   resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-6.0.17.tgz#dc942c87e6dcfa14a70e4e4a162c22eeb4ff3724"
   integrity sha512-7vf2w1NlzKlUynSuyI2DAIKoEOYKYC8k+tlSsk3BRdbzhbJAiWxcYzJy5seg5dFW1WIpKAZ0wiVdHXf/WRlRgg==
 
+"@mantine/modals@^6.0.18":
+  version "6.0.18"
+  resolved "https://registry.yarnpkg.com/@mantine/modals/-/modals-6.0.18.tgz#1f52f3215c3b7b04e828acb5606f91fd2c558dde"
+  integrity sha512-iwO5NEVt3CXcofy8NEOHGYgFjuVb/yxVqNAGaLHM7b9FfHXfS/Mu+YijCHjk6/IHp2BgAGbKJx7PnKCQfz9Esw==
+  dependencies:
+    "@mantine/utils" "6.0.18"
+
 "@mantine/notifications@^6.0.8":
   version "6.0.17"
   resolved "https://registry.yarnpkg.com/@mantine/notifications/-/notifications-6.0.17.tgz#719b89583b9350baa6502e8428e10c8491e553f9"
@@ -1809,6 +1816,11 @@
   version "6.0.17"
   resolved "https://registry.yarnpkg.com/@mantine/utils/-/utils-6.0.17.tgz#7d4a6c7686a3ee19a0ac248ef14780f00730837b"
   integrity sha512-U6SWV/asYE6NhiHx4ltmVZdQR3HwGVqJxVulhOylMcV1tX/P1LMQUCbGV2Oe4O9jbX4/YW5B/CBb4BbEhENQFQ==
+
+"@mantine/utils@6.0.18":
+  version "6.0.18"
+  resolved "https://registry.yarnpkg.com/@mantine/utils/-/utils-6.0.18.tgz#da9ac8b13364277ad1a41b1ad5681fceebc89871"
+  integrity sha512-xvTnAUUHsdpsBm7OrcBueGEPdBwDm7wzUBsHweqSZMjT/HQOf4w4iirefNrFhMD2wNVetNL42kEngEBe6t63/w==
 
 "@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1":
   version "5.1.1-v1"

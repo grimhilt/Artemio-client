@@ -36,7 +36,7 @@ const Line = ({ user, ...props }) => {
             <td>{user.login}</td>
             <td>
                 <Group position="right">
-                    <Button onClick={() => 1} color="green">
+                    <Button onClick={() => props.viewUser(user)} color="green">
                         View
                     </Button>
                     <Button onClick={() => props.updateItem(user)}>Update</Button>
@@ -51,7 +51,13 @@ const Line = ({ user, ...props }) => {
 
 const UserTable = (props) => {
     const rows = props.data.map((user) => (
-        <Line key={user.id} user={user} deleteUser={props.deleteUser} updateItem={props.updateItem} />
+        <Line
+            key={user.id}
+            user={user}
+            deleteUser={props.deleteUser}
+            updateItem={props.updateItem}
+            viewUser={props.viewUser}
+        />
     ));
 
     return (

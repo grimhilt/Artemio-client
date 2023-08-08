@@ -111,7 +111,7 @@ const Content = ({ form, playlistId }) => {
     };
 
     const handleDelete = (index) => {
-        API.playlistRemoveFile(playlistId, { file_id: form.values.files[index].id })
+        API.playlistRemoveFile(playlistId, { file_id: form.values.files[index].pfid })
             .then((res) => {
                 if (res.status === 200) {
                     form.removeListItem('files', index);

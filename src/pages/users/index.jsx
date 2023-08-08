@@ -2,21 +2,24 @@ import { useEffect, useState } from 'react';
 import NavbarSignage from '../../components/navbar';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
-import ModalUserEditor from './user-editor';
+import ModalUserEditor from './user-editor-modal';
 import { Button } from '@mantine/core';
 import GrantAccess, { Perm } from '../../tools/grant-access';
 import UserTable from './users-table';
+import ModalUserView from './user-view-modal';
 
 const Users = () => {
     const [showCreate, setShowCreate] = useState(false);
     const [showUpdate, setShowUpdate] = useState(false);
-    const [itemToUpdate, setItemToUpdate] = useState();
+    const [showView, setShowView] = useState(false);
+    const [itemToUse, setItemToUse] = useState();
 
     const toggleModalCreate = () => setShowCreate(!showCreate);
     const toggleModalUpdate = () => setShowUpdate(!showUpdate);
+    const toggleModalView = () => setShowView(!showView);
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
-    const [deleteLoading, setDeleteLoading] = useState(false);
+    
 
     useEffect(() => {
         API.listUsers()
@@ -69,8 +72,12 @@ const Users = () => {
             <UserTable
                 data={users}
                 updateItem={(item) => {
-                    setItemToUpdate(item);
+                    setItemToUse(item);
                     toggleModalUpdate();
+                }}
+                viewUser={(item) => {
+                    setItemToUse(item);
+                    toggleModalView();
                 }}
                 deleteUser={(id) => setUsers(users.filter((item) => item.id != id))}
                 updateHandler={toggleModalUpdate}
@@ -87,9 +94,10 @@ const Users = () => {
                 handler={(item) => updateUser(item)}
                 handlerClose={toggleModalUpdate}
                 APICall={API.updateUser}
-                item={itemToUpdate}
+                item={itemToUse}
                 name="Update"
             />
+            <ModalUserView opened={showView} user={itemToUse} handler={toggleModalView} />
         </>
     );
 };
