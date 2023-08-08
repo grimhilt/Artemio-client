@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react';
 import NavbarSignage from '../../components/navbar';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
-import ModalCreateUser from './create';
+import ModalUserEditor from './user-editor';
 import { Button } from '@mantine/core';
 import GrantAccess, { Perm } from '../../tools/grant-access';
 import UserTable from './users-table';
 
 const Users = () => {
-    const [showCreate, setShowCreate] = useState(true);
+    const [showCreate, setShowCreate] = useState(false);
     const [showUpdate, setShowUpdate] = useState(false);
+    const [itemToUpdate, setItemToUpdate] = useState();
 
     const toggleModalCreate = () => setShowCreate(!showCreate);
     const toggleModalUpdate = () => setShowUpdate(!showUpdate);
-
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
 
@@ -49,6 +49,10 @@ const Users = () => {
         setUsers((prev) => [...prev, user]);
     };
 
+    const updateUser = (user) => {
+        // setUsers((prev) => [...prev, user]);
+    };
+
     const navbar = {
         title: 'Users',
         search: search,
@@ -63,11 +67,29 @@ const Users = () => {
             <NavbarSignage data={navbar} />
             <UserTable
                 data={users}
-                // updateItem={setItem} // todo
+                updateItem={(item) => {
+                    console.log(item);
+                    setItemToUpdate(item);
+                    toggleModalUpdate();
+                }}
                 onDelete={(id) => setUsers(users.filter((item) => item.id != id))}
                 updateHandler={toggleModalUpdate}
             />
-            <ModalCreateUser opened={showCreate} handler={toggleModalCreate} addUser={(user) => addUser(user)} APICall={API.createUser} />
+            <ModalUserEditor
+                opened={showCreate}
+                handler={(item) => updateUser(item)}
+                handlerClose={toggleModalCreate}
+                APICall={API.createUser}
+                name="Create"
+            />
+            <ModalUserEditor
+                opened={showUpdate}
+                handler={(item) => addUser(item)}
+                handlerClose={toggleModalUpdate}
+                APICall={API.updateUser}
+                item={itemToUpdate}
+                name="Update"
+            />
         </>
     );
 };

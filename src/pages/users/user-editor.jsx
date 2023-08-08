@@ -4,30 +4,44 @@ import { useState } from 'react';
 import { Perm, checkPerm } from '../../tools/grant-access';
 import { useAuth } from '../../tools/auth-provider';
 import setNotification from '../errors/error-notification';
+import { useEffect } from 'react';
 
-const ModalCreateUser = ({ opened, handler, addUser, APICall, item }) => {
+const ModalUserEditor = ({ opened, handlerClose, handler, APICall, name, item }) => {
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
-    const handleClose = (item) => {
-        if (item) {
-            addUser(item);
+    const handleFinish = (e) => {
+        console.log(e)
+        if (e) {
+            handler(e);
         }
-        handler();
+        handlerClose();
     };
 
     const form = useForm({
         initialValues: {
-            login: '',
-            password: '',
-            create_user: false,
-            create_role: false,
-            create_playlist: false,
+            login: item?.login ?? '',
+            password: item?.password ?? '',
+            create_user: checkPerm(Perm.CREATE_USER, item),
+            create_role: checkPerm(Perm.CREATE_ROLE, item),
+            create_playlist: checkPerm(Perm.CREATE_PLAYLIST, item),
         },
         validate: {
             login: isNotEmpty('Login is required'),
             password: isNotEmpty('Password is required'),
         },
     });
+
+    useEffect(() => {
+        if (item) {
+            form.setFieldValue('login', item?.login ?? '');
+            form.setFieldValue('password', item?.password ?? '');
+            form.setFieldValue('create_user', checkPerm(Perm.CREATE_USER, item));
+            form.setFieldValue('create_role', checkPerm(Perm.CREATE_ROLE, item));
+            form.setFieldValue('create_playlist', checkPerm(Perm.CREATE_PLAYLIST, item));
+        }
+        return () => {};
+        // eslint-disable-next-line
+    }, [item]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -37,7 +51,7 @@ const ModalCreateUser = ({ opened, handler, addUser, APICall, item }) => {
             if (item) {
                 // await APICall(item?.id, { name: form.values.name });
                 // item.name = form.values.name;
-                handleClose(item);
+                handleFinish(item);
             } else {
                 let data = { login: form.values.login, password: form.values.password };
                 data.permissions = 0;
@@ -45,7 +59,7 @@ const ModalCreateUser = ({ opened, handler, addUser, APICall, item }) => {
                 if (form.values.create_role) data.permissions += 2;
                 if (form.values.create_playlist) data.permissions += 4;
                 const res = await APICall(data);
-                handleClose(res.data);
+                handleFinish(res.data);
             }
             setIsLoading(false);
         } catch (err) {
@@ -57,13 +71,13 @@ const ModalCreateUser = ({ opened, handler, addUser, APICall, item }) => {
     // todo parent role
 
     return (
-        <Modal.Root opened={opened} onClose={handler}>
+        <Modal.Root opened={opened} onClose={handlerClose}>
             <Modal.Overlay />
             <Modal.Content>
                 <Modal.Header>
                     <Modal.Title>
                         <Text fw={700} fz="lg">
-                            Create User
+                            {name} User
                         </Text>
                     </Modal.Title>
                     <Modal.CloseButton />
@@ -90,29 +104,32 @@ const ModalCreateUser = ({ opened, handler, addUser, APICall, item }) => {
                                 <Stack spacing="sm">
                                     <Switch
                                         label="Create user"
-                                        disabled={checkPerm(Perm.CREATE_USER, user)}
-                                        {...form.getInputProps('create_user')}
+                                        disabled={!checkPerm(Perm.CREATE_USER, user)}
+                                        checked={form.getInputProps('create_user').value}
+                                        onChange={(e) => form.setFieldValue('create_user', e.target.checked)}
                                     />
                                     <Switch
                                         label="Create role"
-                                        disabled={checkPerm(Perm.CREATE_ROLE, user)}
-                                        {...form.getInputProps('create_role')}
+                                        disabled={!checkPerm(Perm.CREATE_ROLE, user)}
+                                        checked={form.getInputProps('create_role').value}
+                                        onChange={(e) => form.setFieldValue('create_role', e.target.checked)}
                                     />
                                     <Switch
                                         label="Create playlist"
-                                        disabled={checkPerm(Perm.CREATE_PLAYLIST, user)}
-                                        {...form.getInputProps('create_playlist')}
+                                        disabled={!checkPerm(Perm.CREATE_PLAYLIST, user)}
+                                        checked={form.getInputProps('create_playlist').value}
+                                        onChange={(e) => form.setFieldValue('create_playlist', e.target.checked)}
                                     />
                                 </Stack>
                             </Paper>
                         </Stack>
 
                         <Group position="right" mt="md">
-                            <Button variant="light" color="red" onClick={handler}>
+                            <Button variant="light" color="red" onClick={handlerClose}>
                                 Cancel
                             </Button>
                             <Button type="submit" variant="light" color="green" loading={isLoading}>
-                                Create
+                                {name}
                             </Button>
                         </Group>
                     </form>
@@ -122,4 +139,4 @@ const ModalCreateUser = ({ opened, handler, addUser, APICall, item }) => {
     );
 };
 
-export default ModalCreateUser;
+export default ModalUserEditor;

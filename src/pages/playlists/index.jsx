@@ -20,10 +20,6 @@ const Playlists = () => {
     const [playlists, setPlaylist] = useState([]);
 
     useEffect(() => {
-        console.log('profile');
-        API.profile()
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
         API.listPlaylists(limit, page)
             .then((res) => {
                 if (res.status === 200) {

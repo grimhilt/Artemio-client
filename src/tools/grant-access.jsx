@@ -12,18 +12,20 @@ export const Perm = {
 };
 
 const checkBit = (dec, perm) => {
+    if (!dec || !perm) return false;
     const binStr = (dec >>> 0).toString(2);
     const len = binStr.length;
-    return binStr[len - perm - 1];
+    return binStr[len - perm] === '1';
 };
 
 export const checkPerm = (perm, user, item = {}) => {
+    if (!perm || !user) return false;
     switch (perm) {
         case Perm.CREATE_ROLE:
             return user.roles.length >= 1 && checkBit(user.roles[0].permissions, Perm.CREATE_ROLE);
         case Perm.CREATE_PLAYLIST:
             return user.roles.length >= 1 && checkBit(user.roles[0].permissions, Perm.CREATE_PLAYLIST);
-        case Perm.CREATE_ROLE:
+        case Perm.CREATE_USER:
             return user.roles.length >= 1 && checkBit(user.roles[0].permissions, Perm.CREATE_USER);
         case Perm.OWN_PLAYLIST:
             return item?.owner_id === user.id;

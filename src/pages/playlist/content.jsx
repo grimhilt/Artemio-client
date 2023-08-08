@@ -10,14 +10,11 @@ import API from '../../services/api';
 import setNotification from '../errors/error-notification';
 
 const Content = ({ form, playlistId }) => {
-    console.log(form.values);
 
     const [fileSelector, setFileSelector] = useState(false);
     const toggleFileSelector = () => setFileSelector(!fileSelector);
 
     const handleAddFiles = (files) => {
-        console.log('handle add file');
-        console.log(files);
         let formFiles = form.values.files;
         let max_position = formFiles[formFiles.length - 1]?.position ?? 0;
         files.forEach((file) => {

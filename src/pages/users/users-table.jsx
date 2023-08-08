@@ -7,9 +7,13 @@ const UserTable = (props) => {
             <td>{user.login}</td>
             <td>
                 <Group>
-                    <Button onClick={() => 1} color="green">View</Button>
-                    <Button onClick={() => 1}>Update</Button>
-                    <Button onClick={() => 1} color="red">Delete</Button>
+                    <Button onClick={() => 1} color="green">
+                        View
+                    </Button>
+                    <Button onClick={() => props.updateItem(user)}>Update</Button>
+                    <Button onClick={() => 1} color="red">
+                        Delete
+                    </Button>
                 </Group>
             </td>
         </tr>

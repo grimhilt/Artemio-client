@@ -7,7 +7,6 @@ const ModalCreatePlaylist = ({ opened, handler, addPlaylist }) => {
         if (item) {
             addPlaylist(item);
         }
-        console.log("call handler")
         handler();
     };
 
