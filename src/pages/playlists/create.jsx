@@ -25,7 +25,7 @@ const ModalCreatePlaylist = ({ opened, handler, addPlaylist }) => {
                 <Modal.Body>
                     <PlaylistViewEditor
                         buttonText="Create"
-                        APICall={API.createPlaylist}
+                        APICall={API.playlists.create}
                         handler={(item) => validated(item)}
                     />
                 </Modal.Body>

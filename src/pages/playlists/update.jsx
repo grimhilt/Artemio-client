@@ -24,7 +24,7 @@ const ModalUpdatePlaylist = ({ item, opened, handler, updatePlaylist }) => {
                     <PlaylistViewEditor
                         item={item}
                         buttonText="Update"
-                        APICall={API.updatePlaylist}
+                        APICall={API.playlists.update}
                         handler={(playlist) => validated(playlist)}
                     />
                 </Modal.Body>

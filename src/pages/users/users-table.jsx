@@ -17,7 +17,7 @@ const Line = ({ user, ...props }) => {
     const [isLoading, setIsLoading] = useState(false);
     const deleteUser = () => {
         setIsLoading(true);
-        API.deleteUser(user.id)
+        API.users.delete(user.id)
             .then((res) => {
                 setIsLoading(false);
                 if (res.status === 200) {

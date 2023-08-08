@@ -41,7 +41,7 @@ const ModalUserView = ({ opened, handler, ...props }) => {
                 opened={showEdit}
                 handler={(item) => setUser(item)}
                 handlerClose={toggleModalEdit}
-                APICall={API.updateUser}
+                APICall={API.users.update}
                 item={user}
                 name="Update"
             />

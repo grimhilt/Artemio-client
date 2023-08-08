@@ -7,6 +7,62 @@ const caller = (url = '/api') => {
 };
 
 const API = {
+    playlists: {
+        create(data) {
+            return caller().post('/playlists', data);
+        },
+        get(id) {
+            return caller().get(`/playlists/${id}`);
+        },
+        list(data) {
+            return caller().get('/playlists', data);
+        },
+        update(playlistId, data) {
+            return caller().put(`/playlists/${playlistId}/update`, data);
+        },
+        activate(playlistId) {
+            return caller().post(`/playlists/${playlistId}/activate`);
+        },
+        disactivate(playlistId) {
+            return caller().post(`/playlists/${playlistId}/disactivate`);
+        },
+        addFile(playlistId, file) {
+            return caller().post(`/playlists/${playlistId}`, file);
+        },
+        removeFile(playlistId, data) {
+            return caller().post(`/playlists/${playlistId}/remove_file`, data);
+        },
+        changeOrder(playlistId, data) {
+            return caller().post(`/playlists/${playlistId}/order`, data);
+        },
+        changeSeconds(playlistId, data) {
+            return caller().post(`/playlists/${playlistId}/seconds`, data);
+        },
+    },
+    roles: {
+        list(data) {
+            return caller().get('/roles', data);
+        },
+    },
+    users: {
+        create(data) {
+            return caller().post('/users', data);
+        },
+        delete(userId) {
+            return caller().delete(`/users/${userId}`);
+        },
+        list(data) {
+            return caller().get('/users', data);
+        },
+    },
+    files: {
+        upload(data) {
+            return caller().post('/file', data);
+        },
+        list() {
+            return caller().get('/file');
+        },
+    },
     profile() {
         return caller().get('/auth/profile');
     },
@@ -15,54 +71,6 @@ const API = {
     },
     login(data) {
         return caller().post('/auth/login', data);
-    },
-    listUsers(data) {
-        return caller().get('/users', data);
-    },
-    listRoles(data) {
-        return caller().get('/roles', data);
-    },
-    listPlaylists(data) {
-        return caller().get('/playlists', data);
-    },
-    createPlaylist(data) {
-        return caller().post('/playlists', data);
-    },
-    updatePlaylist(playlistId, data) {
-        return caller().put(`/playlists/${playlistId}/update`, data);
-    },
-    activate(playlistId) {
-        return caller().post(`/playlists/${playlistId}/activate`);
-    },
-    disactivate(playlistId) {
-        return caller().post(`/playlists/${playlistId}/disactivate`);
-    },
-    getPlaylist(id) {
-        return caller().get(`/playlists/${id}`);
-    },
-    upload(data) {
-        return caller().post('/file', data);
-    },
-    getFiles() {
-        return caller().get('/file');
-    },
-    addFileToPlaylist(playlistId, file) {
-        return caller().post(`/playlists/${playlistId}`, file);
-    },
-    playlistChangeOrder(playlistId, data) {
-        return caller().post(`/playlists/${playlistId}/order`, data);
-    },
-    playlistChangeSeconds(playlistId, data) {
-        return caller().post(`/playlists/${playlistId}/seconds`, data);
-    },
-    playlistRemoveFile(playlistId, data) {
-        return caller().post(`/playlists/${playlistId}/remove_file`, data);
-    },
-    createUser(data) {
-        return caller().post('/users', data);
-    },
-    deleteUser(userId) {
-        return caller().delete(`/users/${userId}`);
     },
 };
 

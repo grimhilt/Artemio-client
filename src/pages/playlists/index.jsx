@@ -8,7 +8,7 @@ import { Button } from '@mantine/core';
 import GrantAccess, { Perm } from '../../tools/grant-access';
 
 const Playlists = () => {
-    const [showCreate, setShowCreate] = useState(false);
+    const [showCreate, setShowCreate] = useState(true);
     const [showUpdate, setShowUpdate] = useState(false);
     const [, setItem] = useState({});
     const [page, setPage] = useState(0);
@@ -20,7 +20,7 @@ const Playlists = () => {
     const [playlists, setPlaylist] = useState([]);
 
     useEffect(() => {
-        API.listPlaylists(limit, page)
+        API.playlists.list(limit, page)
             .then((res) => {
                 if (res.status === 200) {
                     if (playlists.length === 0) setPlaylist(res.data);

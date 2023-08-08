@@ -22,7 +22,7 @@ const Users = () => {
     
 
     useEffect(() => {
-        API.listUsers()
+        API.users.list()
             .then((res) => {
                 if (res.status === 200) {
                     if (users.length === 0) setUsers(res.data);
@@ -32,7 +32,7 @@ const Users = () => {
             .catch((err) => {
                 setNotification(true, err);
             });
-        API.listRoles()
+        API.roles.list()
             .then((res) => {
                 if (res.status === 200) {
                     if (roles.length === 0) setRoles(res.data);
@@ -86,14 +86,14 @@ const Users = () => {
                 opened={showCreate}
                 handler={(item) => addUser(item)}
                 handlerClose={toggleModalCreate}
-                APICall={API.createUser}
+                APICall={API.users.create}
                 name="Create"
             />
             <ModalUserEditor
                 opened={showUpdate}
                 handler={(item) => updateUser(item)}
                 handlerClose={toggleModalUpdate}
-                APICall={API.updateUser}
+                APICall={API.users.update}
                 item={itemToUse}
                 name="Update"
             />
