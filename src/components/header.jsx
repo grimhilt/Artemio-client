@@ -50,6 +50,7 @@ const links = [
     { label: 'Playlists', link: '/playlists' },
     { label: 'Files', link: '/files' },
     { label: 'Planning', link: '/planning' },
+    { label: 'Users', link: '/users' },
 ];
 
 const HeaderSearch = () => {

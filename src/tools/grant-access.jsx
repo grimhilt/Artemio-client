@@ -1,24 +1,30 @@
 import { useAuth } from './auth-provider';
 import Authentication from '../pages/auth';
-import { useEffect } from 'react';
 
 export const Perm = {
-    CREATE_ROLE: 0,
-    CREATE_PLAYLIST: 1,
-    VIEW_PLAYLIST: 2,
-    OWN_PLAYLIST: 3,
-    EDIT_PLAYLIST: 4,
-    ACTIVATE_PLAYLIST: 5,
+    CREATE_USER: 1,
+    CREATE_ROLE: 2,
+    CREATE_PLAYLIST: 3,
+    VIEW_PLAYLIST: 4,
+    OWN_PLAYLIST: 5,
+    EDIT_PLAYLIST: 6,
+    ACTIVATE_PLAYLIST: 7,
 };
 
-const checkPerm = (perm, user, item = {}) => {
-    console.log(user);
-    console.log(item);
+const checkBit = (dec, perm) => {
+    const binStr = (dec >>> 0).toString(2);
+    const len = binStr.length;
+    return binStr[len - perm - 1];
+};
+
+export const checkPerm = (perm, user, item = {}) => {
     switch (perm) {
         case Perm.CREATE_ROLE:
-            return false;
+            return user.roles.length >= 1 && checkBit(user.roles[0].permissions, Perm.CREATE_ROLE);
         case Perm.CREATE_PLAYLIST:
-            return user.roles.findIndex((role) => role.can_create_playlist) !== -1;
+            return user.roles.length >= 1 && checkBit(user.roles[0].permissions, Perm.CREATE_PLAYLIST);
+        case Perm.CREATE_ROLE:
+            return user.roles.length >= 1 && checkBit(user.roles[0].permissions, Perm.CREATE_USER);
         case Perm.OWN_PLAYLIST:
             return item?.owner_id === user.id;
         default:
@@ -28,7 +34,7 @@ const checkPerm = (perm, user, item = {}) => {
 
 const GrantAccess = ({ role, roles, children, item }) => {
     const { user } = useAuth();
-    if (role && checkPerm(role, user, item)) {
+    if (role && checkPerm(role, user)) {
         return children;
     } else if (roles) {
         let flag = false;

@@ -16,6 +16,12 @@ const API = {
     login(data) {
         return caller().post('/auth/login', data);
     },
+    listUsers(data) {
+        return caller().get('/users', data);
+    },
+    listRoles(data) {
+        return caller().get('/roles', data);
+    },
     listPlaylists(data) {
         return caller().get('/playlists', data);
     },
@@ -23,7 +29,7 @@ const API = {
         return caller().post('/playlists', data);
     },
     updatePlaylist(playlistId, data) {
-        return caller().post(`/playlists/${playlistId}/update`, data);
+        return caller().put(`/playlists/${playlistId}/update`, data);
     },
     activate(playlistId) {
         return caller().post(`/playlists/${playlistId}/activate`);
@@ -51,6 +57,9 @@ const API = {
     },
     playlistRemoveFile(playlistId, data) {
         return caller().post(`/playlists/${playlistId}/remove_file`, data);
+    },
+    createUser(data) {
+        return caller().post('/users', data);
     },
 };
 
