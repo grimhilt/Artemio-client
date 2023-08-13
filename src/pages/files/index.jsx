@@ -15,7 +15,7 @@ const Files = () => {
     };
 
     useEffect(() => {
-        API.getFiles()
+        API.files.list()
             .then((res) => {
                 if (res.status === 200) {
                     setFiles(res.data);

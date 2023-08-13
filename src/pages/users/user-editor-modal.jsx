@@ -10,10 +10,10 @@ const ModalUserEditor = ({ opened, handlerClose, handler, APICall, name, item })
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
     const handleFinish = (e) => {
-        console.log(e)
         if (e) {
             handler(e);
         }
+        form.reset()
         handlerClose();
     };
 

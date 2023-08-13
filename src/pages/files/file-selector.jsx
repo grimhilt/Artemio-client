@@ -40,7 +40,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
     }
 
     useEffect(() => {
-        API.getFiles()
+        API.files.list()
             .then((res) => {
                 if (res.status === 200) {
                     setFiles(res.data);
@@ -56,7 +56,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
 
     useEffect(() => {
         if (search.length >= 2) {
-            API.searchfiles(search)
+            API.files.search(search)
                 .then((res) => {
                     if (res.status === 200) {
                         setFiles(res.data);
@@ -66,7 +66,7 @@ const ModalFileSelector = ({ opened, handleClose, handleSubmit, ...props }) => {
                     setNotification(true, err);
                 });
         } else if (search.length === 0) {
-            API.getFiles()
+            API.files.list()
                 .then((res) => {
                     if (res.status === 200) {
                         setFiles(res.data);

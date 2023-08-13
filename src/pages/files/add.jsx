@@ -26,7 +26,7 @@ const ModalAddFile = ({ opened, handler, addFiles }) => {
         setIsLoading(true);
         const formData = new FormData();
         files.forEach((file) => formData.append('file', file));
-        API.upload(formData)
+        API.files.upload(formData)
             .then((res) => {
                 if (res.status === 200) {
                     validate(res.data);

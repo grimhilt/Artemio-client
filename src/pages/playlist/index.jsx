@@ -58,7 +58,7 @@ const Playlist = (item) => {
         if (JSON.stringify(item) !== '{}') {
             setPlaylist(item);
         } else {
-            API.getPlaylist(id)
+            API.playlists.get(id)
                 .then((res) => {
                     if (res.status === 200) {
                         setPlaylist(res.data);
@@ -117,7 +117,7 @@ const Playlist = (item) => {
                 </Group>
             </Group>
             <Paper p="xs" radius="sm" shadow="sm" withBorder my="md">
-                <Content form={form} playlistId={id} />
+                <Content form={form} playlistId={id} playlist={playlist} />
             </Paper>
             <ModalUpdate
                 opened={showUpdate}
