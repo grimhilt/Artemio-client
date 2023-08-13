@@ -1,6 +1,6 @@
 import { Button, TextInput, Group, Stack } from '@mantine/core';
 import { useForm, isNotEmpty } from '@mantine/form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import setNotification from '../errors/error-notification';
 import RoleSelector from './role-selector';
 
@@ -11,8 +11,17 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     };
 
     const [isLoading, setIsLoading] = useState(false);
-    const [rolesView, setRolesView] = useState([]);
-    const [rolesEdit, setRolesEdit] = useState([]);
+    console.log(item);
+    const [rolesView, setRolesView] = useState(item?.view.map((role) => role.id.toString()) ?? []);
+    const [rolesEdit, setRolesEdit] = useState(item?.edit.map((role) => role.id.toString()) ?? []);
+
+    useEffect(() => {
+        if (item) {
+            setRolesView(item?.view.map((role) => role.id.toString()) ?? []);
+            setRolesEdit(item?.edit.map((role) => role.id.toString()) ?? []);
+        }
+        return () => {};
+    }, [item]);
 
     const form = useForm({
         initialValues: {
@@ -50,8 +59,18 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
         <form onSubmit={handleSubmit}>
             <TextInput label="Name" placeholder="Name" withAsterisk {...form.getInputProps('name')} mb="sm" />
             <Stack>
-                <RoleSelector label="View Permission" value={rolesView} setValue={setRolesView} />
-                <RoleSelector label="Edit Permission" value={rolesEdit} setValue={setRolesEdit} />
+                <RoleSelector
+                    defaultRoles={item?.view}
+                    label="View Permission"
+                    value={rolesView}
+                    setValue={setRolesView}
+                />
+                <RoleSelector
+                    defaultRoles={item?.edit}
+                    label="Edit Permission"
+                    value={rolesEdit}
+                    setValue={setRolesEdit}
+                />
             </Stack>
             <Group position="right" mt="md">
                 <Button variant="light" color="red" onClick={handleClose}>

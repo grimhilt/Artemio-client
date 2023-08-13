@@ -3,22 +3,28 @@ import { useEffect, useState } from 'react';
 import setNotification from '../errors/error-notification';
 import API from '../../services/api';
 
-const RoleSelector = ({ label, value, setValue }) => {
+const RoleSelector = ({ defaultRoles, label, value, setValue }) => {
     const [data, setData] = useState([]);
     const [search, setSearch] = useState();
+
+    const addRoles = (roles) => {
+        if (!roles) return;
+        for (let i = 0; i < roles.length; i++) {
+            const role = roles[i];
+            if (!data.find((r) => r.id === role.id)) {
+                role.label = role.name;
+                role.value = role.id.toString();
+                setData((prev) => [...prev, role]);
+            }
+        }
+    };
+
     useEffect(() => {
         API.roles
             .search(search)
             .then((res) => {
                 if (res.status === 200) {
-                    for (let i = 0; i < res.data.length; i++) {
-                        const role = res.data[i];
-                        if (!data.find((r) => r.id === role.id)) {
-                            role.label = role.name;
-                            role.value = role.id.toString();
-                            setData((prev) => [...prev, role]);
-                        }
-                    }
+                    addRoles(res.data);
                 } else {
                     setNotification(true, res);
                 }
@@ -26,15 +32,13 @@ const RoleSelector = ({ label, value, setValue }) => {
             .catch((err) => {
                 setNotification(true, err);
             });
+        // eslint-disable-next-line
     }, [search]);
 
-    // useEffect(() => {
-    //     setData([
-    //         { value: 'React', label: 'React' },
-    //         { value: 'Angular', label: 'Angular' },
-    //         { value: 'Svelte', label: 'Svelte' },
-    //     ]);
-    // }, []);
+    useEffect(() => {
+        addRoles(defaultRoles);
+        // eslint-disable-next-line
+    }, [defaultRoles]);
 
     // creatable
     // getCreateLabel={(query) => `+ Create ${query}`}
