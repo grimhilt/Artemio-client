@@ -8,9 +8,9 @@ import { useState } from 'react';
 import ModalFileSelector from '../files/file-selector';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
+import GrantAccess, { Perm } from '../../tools/grant-access';
 
-const Content = ({ form, playlistId }) => {
-
+const Content = ({ form, playlistId, playlist }) => {
     const [fileSelector, setFileSelector] = useState(false);
     const toggleFileSelector = () => setFileSelector(!fileSelector);
 
@@ -24,15 +24,15 @@ const Content = ({ form, playlistId }) => {
             file.seconds = 10;
             const index = form.values.files.length;
             form.insertListItem('files', file);
-            API.addFileToPlaylist(playlistId, { position: file.position, file_id: file.id, seconds: file.seconds })
+            API.playlists.addFile(playlistId, { position: file.position, file_id: file.id, seconds: file.seconds })
                 .then((res) => {
                     if (res.status !== 200) {
                         setNotification(true, `Error when adding file (${res.status})`);
                     }
                 })
                 .catch((err) => {
-                    console.log("here")
-                    form.removeListItem('files', index)
+                    console.log('here');
+                    form.removeListItem('files', index);
                     setNotification(true, err);
                 });
         });
@@ -55,7 +55,7 @@ const Content = ({ form, playlistId }) => {
             let newPosition = (below_position + above_position) / 2;
 
             // sending modification to server
-            API.playlistChangeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
+            API.playlists.changeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
                 .then((res) => {
                     if (res.status === 200) {
                         resolve(true);
@@ -95,7 +95,7 @@ const Content = ({ form, playlistId }) => {
 
     const changeSeconds = (seconds, index) => {
         const fileId = form.values.files[index].id;
-        API.playlistChangeSeconds(playlistId, { file_id: fileId, seconds: seconds })
+        API.playlists.changeSeconds(playlistId, { file_id: fileId, seconds: seconds })
             .then((res) => {
                 if (res.status === 200) {
                     setOriginSecs();
@@ -111,7 +111,7 @@ const Content = ({ form, playlistId }) => {
     };
 
     const handleDelete = (index) => {
-        API.playlistRemoveFile(playlistId, { file_id: form.values.files[index].pfid })
+        API.playlists.removeFile(playlistId, { file_id: form.values.files[index].pfid })
             .then((res) => {
                 if (res.status === 200) {
                     form.removeListItem('files', index);
@@ -175,16 +175,24 @@ const Content = ({ form, playlistId }) => {
                 </StrictModeDroppable>
             </DragDropContext>
 
-            <Group position="center" mt="md">
-                <Button vairant="light" onClick={toggleFileSelector}>
-                    Select File(s)
-                </Button>
-            </Group>
-            <ModalFileSelector
-                opened={fileSelector}
-                multi
-                handleClose={toggleFileSelector}
-                handleSubmit={(files) => handleAddFiles(files)}
+            <GrantAccess
+                role={Perm.EDIT_PLAYLIST}
+                item={playlist}
+                children={
+                    <>
+                        <Group position="center" mt="md">
+                            <Button vairant="light" onClick={toggleFileSelector}>
+                                Select File(s)
+                            </Button>
+                        </Group>
+                        <ModalFileSelector
+                            opened={fileSelector}
+                            multi
+                            handleClose={toggleFileSelector}
+                            handleSubmit={(files) => handleAddFiles(files)}
+                        />
+                    </>
+                }
             />
         </Box>
     );

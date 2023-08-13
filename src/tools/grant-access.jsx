@@ -29,6 +29,20 @@ export const checkPerm = (perm, user, item = {}) => {
             return user.roles.length >= 1 && checkBit(user.roles[0].permissions, Perm.CREATE_USER);
         case Perm.OWN_PLAYLIST:
             return item?.owner_id === user.id;
+        case Perm.VIEW_PLAYLIST:
+            return (
+                checkPerm(Perm.OWN_PLAYLIST, user, item) ||
+                item?.view.find(
+                    (role) => role.user_id === user.id || user.roles.find((user_role) => user_role.id === role.id)
+                )
+            );
+        case Perm.EDIT_PLAYLIST:
+            return (
+                checkPerm(Perm.OWN_PLAYLIST, user, item) ||
+                item?.edit.find(
+                    (role) => role.user_id === user.id || user.roles.find((user_role) => user_role.id === role.id)
+                )
+            );
         default:
             return false;
     }
@@ -36,7 +50,7 @@ export const checkPerm = (perm, user, item = {}) => {
 
 const GrantAccess = ({ role, roles, children, item }) => {
     const { user } = useAuth();
-    if (role && checkPerm(role, user)) {
+    if (role && checkPerm(role, user, item)) {
         return children;
     } else if (roles) {
         let flag = false;
