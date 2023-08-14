@@ -11,7 +11,6 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     };
 
     const [isLoading, setIsLoading] = useState(false);
-    console.log(item);
     const [rolesView, setRolesView] = useState(item?.view.map((role) => role.id.toString()) ?? []);
     const [rolesEdit, setRolesEdit] = useState(item?.edit.map((role) => role.id.toString()) ?? []);
 
@@ -39,7 +38,7 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
             setIsLoading(true);
             if (item) {
                 await APICall(item?.id, { name: form.values.name });
-                // todo permissions
+                // todo permissions update
                 item.name = form.values.name;
                 handleClose(item);
             } else {

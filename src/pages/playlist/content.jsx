@@ -4,15 +4,28 @@ import { IconGripVertical } from '@tabler/icons-react';
 import { StrictModeDroppable } from './StrictModeDroppable';
 import { ActionIcon, Button, Center, Group, NumberInput, Paper, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ModalFileSelector from '../files/file-selector';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
-import GrantAccess, { Perm } from '../../tools/grant-access';
+import GrantAccess, { Perm, checkPerm } from '../../tools/grant-access';
+import { useAuth } from '../../tools/auth-provider';
+import { parseTime } from '../../tools/timeUtil';
 
 const Content = ({ form, playlistId, playlist }) => {
     const [fileSelector, setFileSelector] = useState(false);
     const toggleFileSelector = () => setFileSelector(!fileSelector);
+    const [canEdit, setCanEdit] = useState(false);
+    const { user } = useAuth();
+
+    useEffect(() => {
+        if (!user || !playlist) return;
+        const canEditTmp = checkPerm(Perm.EDIT_PLAYLIST, user, playlist);
+        if (canEditTmp != canEdit) {
+            setCanEdit(canEditTmp);
+        }
+        return () => {};
+    }, [playlist, user]);
 
     const handleAddFiles = (files) => {
         let formFiles = form.values.files;
@@ -24,7 +37,8 @@ const Content = ({ form, playlistId, playlist }) => {
             file.seconds = 10;
             const index = form.values.files.length;
             form.insertListItem('files', file);
-            API.playlists.addFile(playlistId, { position: file.position, file_id: file.id, seconds: file.seconds })
+            API.playlists
+                .addFile(playlistId, { position: file.position, file_id: file.id, seconds: file.seconds })
                 .then((res) => {
                     if (res.status !== 200) {
                         setNotification(true, `Error when adding file (${res.status})`);
@@ -55,7 +69,8 @@ const Content = ({ form, playlistId, playlist }) => {
             let newPosition = (below_position + above_position) / 2;
 
             // sending modification to server
-            API.playlists.changeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
+            API.playlists
+                .changeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
                 .then((res) => {
                     if (res.status === 200) {
                         resolve(true);
@@ -95,7 +110,8 @@ const Content = ({ form, playlistId, playlist }) => {
 
     const changeSeconds = (seconds, index) => {
         const fileId = form.values.files[index].id;
-        API.playlists.changeSeconds(playlistId, { file_id: fileId, seconds: seconds })
+        API.playlists
+            .changeSeconds(playlistId, { file_id: fileId, seconds: seconds })
             .then((res) => {
                 if (res.status === 200) {
                     setOriginSecs();
@@ -111,7 +127,8 @@ const Content = ({ form, playlistId, playlist }) => {
     };
 
     const handleDelete = (index) => {
-        API.playlists.removeFile(playlistId, { file_id: form.values.files[index].pfid })
+        API.playlists
+            .removeFile(playlistId, { file_id: form.values.files[index].pfid })
             .then((res) => {
                 if (res.status === 200) {
                     form.removeListItem('files', index);
@@ -132,6 +149,7 @@ const Content = ({ form, playlistId, playlist }) => {
                         <Flex direction="row" align="center" gap="lg" justify="flex-end">
                             <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
                             <Image width={150} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
+                            { canEdit ? 
                             <NumberInput
                                 required
                                 hideControls
@@ -140,14 +158,24 @@ const Content = ({ form, playlistId, playlist }) => {
                                 onChange={(secs) => handleChangeSeconds(secs, index)}
                                 error={form.getInputProps(`files.${index}.seconds`).errors && 'This field is required'}
                             />
-                            <ActionIcon color="red" variant="light" size="lg" onClick={() => handleDelete(index)}>
-                                <IconTrash size="1rem" />
-                            </ActionIcon>
+                            : <Text>Display time: {parseTime(form.getInputProps(`files.${index}.seconds`).value)}</Text>
+                            }
+                            {canEdit ? (
+                                <ActionIcon color="red" variant="light" size="lg" onClick={() => handleDelete(index)}>
+                                    <IconTrash size="1rem" />
+                                </ActionIcon>
+                            ) : (
+                                <></>
+                            )}
                         </Flex>
                     </Paper>
-                    <Center {...provided.dragHandleProps}>
-                        <IconGripVertical size="1.2rem" />
-                    </Center>
+                    {canEdit ? (
+                        <Center {...provided.dragHandleProps}>
+                            <IconGripVertical size="1.2rem" />
+                        </Center>
+                    ) : (
+                        <></>
+                    )}
                 </Group>
             )}
         </Draggable>
@@ -175,25 +203,23 @@ const Content = ({ form, playlistId, playlist }) => {
                 </StrictModeDroppable>
             </DragDropContext>
 
-            <GrantAccess
-                role={Perm.EDIT_PLAYLIST}
-                item={playlist}
-                children={
-                    <>
-                        <Group position="center" mt="md">
-                            <Button vairant="light" onClick={toggleFileSelector}>
-                                Select File(s)
-                            </Button>
-                        </Group>
-                        <ModalFileSelector
-                            opened={fileSelector}
-                            multi
-                            handleClose={toggleFileSelector}
-                            handleSubmit={(files) => handleAddFiles(files)}
-                        />
-                    </>
-                }
-            />
+            {canEdit ? (
+                <>
+                    <Group position="center" mt="md">
+                        <Button vairant="light" onClick={toggleFileSelector}>
+                            Select File(s)
+                        </Button>
+                    </Group>
+                    <ModalFileSelector
+                        opened={fileSelector}
+                        multi
+                        handleClose={toggleFileSelector}
+                        handleSubmit={(files) => handleAddFiles(files)}
+                    />
+                </>
+            ) : (
+                <></>
+            )}
         </Box>
     );
 };
