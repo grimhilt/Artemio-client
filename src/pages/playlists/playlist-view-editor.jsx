@@ -11,8 +11,8 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     };
 
     const [isLoading, setIsLoading] = useState(false);
-    const [rolesView, setRolesView] = useState(item?.view.map((role) => role.id.toString()) ?? []);
-    const [rolesEdit, setRolesEdit] = useState(item?.edit.map((role) => role.id.toString()) ?? []);
+    const [rolesView, setRolesView] = useState(item?.view?.map((role) => role.id.toString()) ?? []);
+    const [rolesEdit, setRolesEdit] = useState(item?.edit?.map((role) => role.id.toString()) ?? []);
 
     useEffect(() => {
         if (item) {
@@ -37,10 +37,10 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
         try {
             setIsLoading(true);
             if (item) {
-                await APICall(item?.id, { name: form.values.name });
-                // todo permissions update
-                item.name = form.values.name;
-                handleClose(item);
+                const view = rolesView.map((roleId) => parseInt(roleId));
+                const edit = rolesEdit.map((roleId) => parseInt(roleId));
+                const res = await APICall(item?.id, { name: form.values.name, view: view, edit: edit });
+                handleClose(res.data);
             } else {
                 const view = rolesView.map((roleId) => parseInt(roleId));
                 const edit = rolesEdit.map((roleId) => parseInt(roleId));
