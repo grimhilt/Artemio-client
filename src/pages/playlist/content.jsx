@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import ModalFileSelector from '../files/file-selector';
 import API from '../../services/api';
 import setNotification from '../errors/error-notification';
-import GrantAccess, { Perm, checkPerm } from '../../tools/grant-access';
+import { Perm, checkPerm } from '../../tools/grant-access';
 import { useAuth } from '../../tools/auth-provider';
 import { parseTime } from '../../tools/timeUtil';
 
@@ -21,10 +21,11 @@ const Content = ({ form, playlistId, playlist }) => {
     useEffect(() => {
         if (!user || !playlist) return;
         const canEditTmp = checkPerm(Perm.EDIT_PLAYLIST, user, playlist);
-        if (canEditTmp != canEdit) {
+        if (canEditTmp !== canEdit) {
             setCanEdit(canEditTmp);
         }
         return () => {};
+        // eslint-disable-next-line
     }, [playlist, user]);
 
     const handleAddFiles = (files) => {
@@ -141,67 +142,77 @@ const Content = ({ form, playlistId, playlist }) => {
             });
     };
 
-    const fields = form.values.files.map((_, index) => (
-        <Draggable key={index} index={index} draggableId={index.toString()}>
-            {(provided) => (
-                <Group ref={provided.innerRef} mt="xs" {...provided.draggableProps} position="center">
-                    <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
-                        <Flex direction="row" align="center" gap="lg" justify="flex-end">
-                            <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
-                            <Image width={150} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
-                            { canEdit ? 
-                            <NumberInput
-                                required
-                                hideControls
-                                description="Seconds to display"
-                                value={form.getInputProps(`files.${index}.seconds`).value}
-                                onChange={(secs) => handleChangeSeconds(secs, index)}
-                                error={form.getInputProps(`files.${index}.seconds`).errors && 'This field is required'}
-                            />
-                            : <Text>Display time: {parseTime(form.getInputProps(`files.${index}.seconds`).value)}</Text>
-                            }
-                            {canEdit ? (
+    const fields = form.values.files.map((_, index) =>
+        canEdit ? (
+            <Draggable key={index} index={index} draggableId={index.toString()}>
+                {(provided) => (
+                    <Group ref={provided.innerRef} mt="xs" {...provided.draggableProps} position="center">
+                        <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
+                            <Flex direction="row" align="center" gap="lg" justify="flex-end">
+                                <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
+                                <Image width={150} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
+                                <NumberInput
+                                    required
+                                    hideControls
+                                    description="Seconds to display"
+                                    value={form.getInputProps(`files.${index}.seconds`).value}
+                                    onChange={(secs) => handleChangeSeconds(secs, index)}
+                                    error={
+                                        form.getInputProps(`files.${index}.seconds`).errors && 'This field is required'
+                                    }
+                                />
+                                <Text>
+                                    Display time: {parseTime(form.getInputProps(`files.${index}.seconds`).value)}
+                                </Text>
                                 <ActionIcon color="red" variant="light" size="lg" onClick={() => handleDelete(index)}>
                                     <IconTrash size="1rem" />
                                 </ActionIcon>
-                            ) : (
-                                <></>
-                            )}
-                        </Flex>
-                    </Paper>
-                    {canEdit ? (
+                            </Flex>
+                        </Paper>
                         <Center {...provided.dragHandleProps}>
                             <IconGripVertical size="1.2rem" />
                         </Center>
-                    ) : (
-                        <></>
-                    )}
-                </Group>
-            )}
-        </Draggable>
-    ));
+                    </Group>
+                )}
+            </Draggable>
+        ) : (
+            <Group key={index} mt="xs" position="center">
+                <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
+                    <Flex direction="row" align="center" gap="lg" justify="flex-end">
+                        <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
+                        <Image width={150} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
+                        <Text>Display time: {parseTime(form.getInputProps(`files.${index}.seconds`).value)}</Text>
+                    </Flex>
+                </Paper>
+            </Group>
+        )
+    );
 
     return (
         <Box mx="auto" maw={1200}>
-            <DragDropContext
-                onDragEnd={({ destination, source }) => {
-                    form.reorderListItem('files', { from: source.index, to: destination.index });
-                    changePositionValue(source.index, destination.index).then((success) => {
-                        if (!success) {
-                            form.reorderListItem('files', { from: destination.index, to: source.index });
-                        }
-                    });
-                }}
-            >
-                <StrictModeDroppable droppableId="dnd-list" direction="vertical">
-                    {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {fields}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </StrictModeDroppable>
-            </DragDropContext>
+            {canEdit ? (
+                <DragDropContext
+                    onDragEnd={({ destination, source }) => {
+                        form.reorderListItem('files', { from: source.index, to: destination.index });
+                        changePositionValue(source.index, destination.index).then((success) => {
+                            if (!success) {
+                                form.reorderListItem('files', { from: destination.index, to: source.index });
+                            }
+                        });
+                    }}
+                >
+                    <StrictModeDroppable droppableId="dnd-list" direction="vertical">
+                        {(provided) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef}>
+                                {fields}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </StrictModeDroppable>
+                </DragDropContext>
+            ) : (
+                fields
+            )}
 
             {canEdit ? (
                 <>

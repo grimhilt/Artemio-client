@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import API from '../../services/api';
 import { parseTime } from '../../tools/timeUtil';
 import setNotification from '../errors/error-notification';
-import ModalUpdate from '../playlists/update';
+import ModalUpdatePlaylist from '../playlists/update';
 import { useForm } from '@mantine/form';
 import Content from './content';
 import { useNavigate } from 'react-router-dom';
@@ -49,10 +49,6 @@ const Playlist = (item) => {
         }, 0);
         setDuration(duration);
     }, [form.values]);
-
-    const updatePlaylist = (playlist) => {
-        setPlaylist(playlist);
-    };
 
     useEffect(() => {
         if (JSON.stringify(item) !== '{}') {
@@ -119,11 +115,11 @@ const Playlist = (item) => {
             <Paper p="xs" radius="sm" shadow="sm" withBorder my="md">
                 <Content form={form} playlistId={id} playlist={playlist} />
             </Paper>
-            <ModalUpdate
+            <ModalUpdatePlaylist
                 opened={showUpdate}
                 handler={toggleUpdate}
                 item={playlist}
-                updatePlaylist={(playlist) => updatePlaylist(playlist)}
+                updatePlaylist={(playlist) => setPlaylist(playlist)}
             />
         </>
     );

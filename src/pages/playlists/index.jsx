@@ -63,7 +63,7 @@ const Playlists = () => {
             <PlaylistTable
                 data={playlists}
                 updateItem={setItem} // todo
-                // eslint-disable-next-line eqeqeq
+                // eslint-disable-next-line
                 onDelete={(id) => setPlaylist(playlists.filter((item) => item._id != id))}
                 updateHandler={toggleModalUpdate}
                 loadMore={loadMore}
