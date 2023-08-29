@@ -3,7 +3,7 @@ import PlaylistViewEditor from './playlist-view-editor';
 import API from '../../services/api';
 
 const ModalCreatePlaylist = ({ opened, handler, addPlaylist }) => {
-    const validated = (item) => {
+    const validate = (item) => {
         if (item) {
             addPlaylist(item);
         }
@@ -26,7 +26,7 @@ const ModalCreatePlaylist = ({ opened, handler, addPlaylist }) => {
                     <PlaylistViewEditor
                         buttonText="Create"
                         APICall={API.playlists.create}
-                        handler={(item) => validated(item)}
+                        handler={(item) => validate(item)}
                     />
                 </Modal.Body>
             </Modal.Content>

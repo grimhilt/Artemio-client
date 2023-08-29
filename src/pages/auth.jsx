@@ -62,7 +62,7 @@ const Authentication = ({ redirect }) => {
                 align="center"
                 sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })}
             >
-                Connect to signage
+                Connect to Artemio
             </Title>
 
             <Paper withBorder shadow="md" p={30} mt={30} radius="md">

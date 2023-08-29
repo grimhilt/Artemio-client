@@ -3,8 +3,10 @@ import API from '../../services/api';
 import PlaylistViewEditor from './playlist-view-editor';
 
 const ModalUpdatePlaylist = ({ item, opened, handler, updatePlaylist }) => {
-    const validated = (playlist) => {
-        updatePlaylist(playlist);
+    const validate = (playlist) => {
+        if (playlist) {
+            updatePlaylist(playlist);
+        }
         handler();
     };
 
@@ -25,7 +27,7 @@ const ModalUpdatePlaylist = ({ item, opened, handler, updatePlaylist }) => {
                         item={item}
                         buttonText="Update"
                         APICall={API.playlists.update}
-                        handler={(playlist) => validated(playlist)}
+                        handler={(playlist) => validate(playlist)}
                     />
                 </Modal.Body>
             </Modal.Content>

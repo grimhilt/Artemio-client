@@ -22,7 +22,7 @@ const Playlist = (item) => {
 
     const toggleActivate = () => {
         setIsLoading(true);
-        (isActive ? API.disactivate : API.activate)(id)
+        (isActive ? API.playlists.disactivate : API.playlists.activate)(id)
             .then((res) => {
                 if (res.status === 200) {
                     setIsActive(!isActive);

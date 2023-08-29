@@ -64,10 +64,10 @@ const API = {
     },
     files: {
         upload(data) {
-            return caller().post('/file', data);
+            return caller().post('/files', data);
         },
         list() {
-            return caller().get('/file');
+            return caller().get('/files');
         },
     },
     profile() {

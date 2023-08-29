@@ -161,9 +161,6 @@ const Content = ({ form, playlistId, playlist }) => {
                                         form.getInputProps(`files.${index}.seconds`).errors && 'This field is required'
                                     }
                                 />
-                                <Text>
-                                    Display time: {parseTime(form.getInputProps(`files.${index}.seconds`).value)}
-                                </Text>
                                 <ActionIcon color="red" variant="light" size="lg" onClick={() => handleDelete(index)}>
                                     <IconTrash size="1rem" />
                                 </ActionIcon>

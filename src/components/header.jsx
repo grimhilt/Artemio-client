@@ -70,7 +70,7 @@ const HeaderSearch = () => {
                 <Group>
                     <Avatar src={Logo} size={30} />
                     <UnstyledButton onClick={() => navigate('/')} className={classes.link}>
-                        <Title order={1}>Signage</Title>
+                        <Title order={1}>Artemio</Title>
                     </UnstyledButton>
                 </Group>
 
