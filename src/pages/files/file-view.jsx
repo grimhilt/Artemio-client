@@ -13,7 +13,7 @@ const FileView = ({ file, onSelect, onDelete, ...props }) => {
     return (
         <Card shadow="sm" padding="md" withBorder>
             <Card.Section>
-                <Image src={'/api/file/' + file?.id ?? ''} alt={file?.name ?? ''} withPlaceholder fit="contain" />
+                <Image src={'/api/files/' + file?.id ?? ''} alt={file?.name ?? ''} withPlaceholder fit="contain" />
             </Card.Section>
             <Text>{file?.name ?? 'File Name'}</Text>
             <Group position="center" grow>

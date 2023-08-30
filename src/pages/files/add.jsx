@@ -27,16 +27,8 @@ const ModalAddFile = ({ opened, handler, addFiles }) => {
         const formData = new FormData();
         const CHUNK_SIZE = 1 * 1024 * 1024; // 1MB chunks
 
-        files.forEach((file, index) => {
-            const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+        files.forEach((file) => formData.append(`${file.name}`, file, file.name));
 
-            for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-                const start = chunkIndex * CHUNK_SIZE;
-                const end = Math.min(start + CHUNK_SIZE, file.size);
-                formData.append(`${files[index].name}`, file.slice(start, end), file.name);
-            }
-        });
-        
         API.files
             .upload(formData)
             .then((res) => {

@@ -8,7 +8,7 @@ import { Button } from '@mantine/core';
 import GrantAccess, { Perm } from '../../tools/grant-access';
 
 const Playlists = () => {
-    const [showCreate, setShowCreate] = useState(true);
+    const [showCreate, setShowCreate] = useState(false);
     const [showUpdate, setShowUpdate] = useState(false);
     const [, setItem] = useState({});
     const [page, setPage] = useState(0);

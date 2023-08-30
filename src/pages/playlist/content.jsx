@@ -150,7 +150,7 @@ const Content = ({ form, playlistId, playlist }) => {
                         <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
                             <Flex direction="row" align="center" gap="lg" justify="flex-end">
                                 <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
-                                <Image width={150} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
+                                <Image width={150} src={'/api/files/' + form.getInputProps(`files.${index}.id`).value} />
                                 <NumberInput
                                     required
                                     hideControls
@@ -177,7 +177,7 @@ const Content = ({ form, playlistId, playlist }) => {
                 <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
                     <Flex direction="row" align="center" gap="lg" justify="flex-end">
                         <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
-                        <Image width={150} src={'/api/file/' + form.getInputProps(`files.${index}.id`).value} />
+                        <Image width={150} src={'/api/files/' + form.getInputProps(`files.${index}.id`).value} />
                         <Text>Display time: {parseTime(form.getInputProps(`files.${index}.seconds`).value)}</Text>
                     </Flex>
                 </Paper>

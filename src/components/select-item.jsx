@@ -13,7 +13,7 @@ const SelectorItem = ({ file, clickHandler }) => {
             <Card shadow="sm">
                 <Card.Section>
                     <Image
-                        src={"/api/file/"+file.id}
+                        src={"/api/files/"+file.id}
                         alt={file.name}
                         height={100}
                         fit="cover"
