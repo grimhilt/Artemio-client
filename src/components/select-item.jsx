@@ -1,5 +1,6 @@
-import { Card, Grid, Text, Image, Button, Center } from '@mantine/core';
+import { Card, Grid, Text, Button, Center } from '@mantine/core';
 import { useState } from 'react';
+import MediaPlayer from './media-player';
 
 const SelectorItem = ({ file, clickHandler }) => {
     const [selected, setSelected] = useState(false);
@@ -12,14 +13,7 @@ const SelectorItem = ({ file, clickHandler }) => {
         <Grid.Col span={1} key={file.id}>
             <Card shadow="sm">
                 <Card.Section>
-                    <Image
-                        src={"/api/files/"+file.id}
-                        alt={file.name}
-                        height={100}
-                        fit="cover"
-                        radius="md"
-                        withPlaceholder
-                    />
+                    <MediaPlayer file={file} />
                 </Card.Section>
                 <Center>
                     <Text order={4} mt="md">

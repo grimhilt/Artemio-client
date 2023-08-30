@@ -11,6 +11,7 @@ import setNotification from '../errors/error-notification';
 import { Perm, checkPerm } from '../../tools/grant-access';
 import { useAuth } from '../../tools/auth-provider';
 import { parseTime } from '../../tools/timeUtil';
+import MediaPlayer from '../../components/media-player';
 
 const Content = ({ form, playlistId, playlist }) => {
     const [fileSelector, setFileSelector] = useState(false);
@@ -150,7 +151,7 @@ const Content = ({ form, playlistId, playlist }) => {
                         <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
                             <Flex direction="row" align="center" gap="lg" justify="flex-end">
                                 <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
-                                <Image width={150} src={'/api/files/' + form.getInputProps(`files.${index}.id`).value} />
+                                <MediaPlayer file={form.getInputProps(`files.${index}`).value} />
                                 <NumberInput
                                     required
                                     hideControls
@@ -177,7 +178,7 @@ const Content = ({ form, playlistId, playlist }) => {
                 <Paper p="xs" radius="sm" shadow="sm" withBorder spacing="xs" style={{ width: '90%' }}>
                     <Flex direction="row" align="center" gap="lg" justify="flex-end">
                         <Text>{form.getInputProps(`files.${index}.name`).value}</Text>
-                        <Image width={150} src={'/api/files/' + form.getInputProps(`files.${index}.id`).value} />
+                        <MediaPlayer file={form.getInputProps(`files.${index}`).value} />
                         <Text>Display time: {parseTime(form.getInputProps(`files.${index}.seconds`).value)}</Text>
                     </Flex>
                 </Paper>

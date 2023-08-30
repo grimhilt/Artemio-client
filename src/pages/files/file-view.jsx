@@ -1,4 +1,5 @@
-import { Card, Text, Image, Button, Group } from '@mantine/core';
+import { Card, Text, Image, Button, Group, Center } from '@mantine/core';
+import MediaPlayer from '../../components/media-player';
 
 const FileView = ({ file, onSelect, onDelete, ...props }) => {
     // const deleteHandler = async () => {
@@ -13,7 +14,9 @@ const FileView = ({ file, onSelect, onDelete, ...props }) => {
     return (
         <Card shadow="sm" padding="md" withBorder>
             <Card.Section>
-                <Image src={'/api/files/' + file?.id ?? ''} alt={file?.name ?? ''} withPlaceholder fit="contain" />
+                <Center>
+                    <MediaPlayer file={file} shouldContain={true} />
+                </Center>
             </Card.Section>
             <Text>{file?.name ?? 'File Name'}</Text>
             <Group position="center" grow>

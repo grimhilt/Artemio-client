@@ -2,7 +2,7 @@ import { Button, TextInput, Group, Stack } from '@mantine/core';
 import { useForm, isNotEmpty } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import setNotification from '../errors/error-notification';
-import RoleSelector from './role-selector';
+import RoleSelector from '../roles/role-selector';
 
 const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
     const handleClose = (playlist) => {
@@ -72,7 +72,7 @@ const PlaylistViewEditor = ({ item, handler, buttonText, APICall }) => {
                 />
             </Stack>
             <Group position="right" mt="md">
-                <Button variant="light" color="red" onClick={handleClose}>
+                <Button variant="light" color="red" onClick={() => handleClose()}>
                     Cancel
                 </Button>
                 <Button type="submit" variant="light" color="green" loading={isLoading}>
