@@ -12,6 +12,9 @@ import { Perm, checkPerm } from '../../tools/grant-access';
 import { useAuth } from '../../tools/auth-provider';
 import { parseTime } from '../../tools/timeUtil';
 import MediaPlayer from '../../components/media-player';
+import { isVideo } from '../../tools/fileUtil';
+
+const DEFAULT_FILE_TIME = 2;
 
 const Content = ({ form, playlistId, playlist }) => {
     const [fileSelector, setFileSelector] = useState(false);
@@ -36,7 +39,7 @@ const Content = ({ form, playlistId, playlist }) => {
             max_position++;
 
             file.position = max_position;
-            file.seconds = 10;
+            file.seconds = DEFAULT_FILE_TIME;
             const index = form.values.files.length;
             form.insertListItem('files', file);
             API.playlists
@@ -154,10 +157,18 @@ const Content = ({ form, playlistId, playlist }) => {
                                 <MediaPlayer file={form.getInputProps(`files.${index}`).value} />
                                 <NumberInput
                                     required
+                                    {...(isVideo(form.getInputProps(`files.${index}.type`).value)
+                                        ? {
+                                              disabled: true,
+                                              value: 0,
+                                              description: 'Default to video duration',
+                                          }
+                                        : {
+                                              value: form.getInputProps(`files.${index}.seconds`).value,
+                                              onChange: (secs) => handleChangeSeconds(secs, index),
+                                          })}
                                     hideControls
-                                    description="Seconds to display"
-                                    value={form.getInputProps(`files.${index}.seconds`).value}
-                                    onChange={(secs) => handleChangeSeconds(secs, index)}
+                                    label="Seconds to display"
                                     error={
                                         form.getInputProps(`files.${index}.seconds`).errors && 'This field is required'
                                     }

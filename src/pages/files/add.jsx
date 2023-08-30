@@ -25,7 +25,6 @@ const ModalAddFile = ({ opened, handler, addFiles }) => {
     const handleSubmit = () => {
         setIsLoading(true);
         const formData = new FormData();
-        const CHUNK_SIZE = 1 * 1024 * 1024; // 1MB chunks
 
         files.forEach((file) => formData.append(`${file.name}`, file, file.name));
 
