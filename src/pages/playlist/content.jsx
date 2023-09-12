@@ -75,7 +75,7 @@ const Content = ({ form, playlistId, playlist }) => {
 
             // sending modification to server
             API.playlists
-                .changeOrder(playlistId, { file_id: formFiles[from].id, position: newPosition })
+                .changeOrder(playlistId, { pfid: formFiles[from].pfid, position: newPosition })
                 .then((res) => {
                     if (res.status === 200) {
                         resolve(true);
@@ -114,9 +114,9 @@ const Content = ({ form, playlistId, playlist }) => {
     };
 
     const changeSeconds = (seconds, index) => {
-        const fileId = form.values.files[index].id;
+        const filePfid = form.values.files[index].pfid;
         API.playlists
-            .changeSeconds(playlistId, { file_id: fileId, seconds: seconds })
+            .changeSeconds(playlistId, { pfid: filePfid, seconds: seconds })
             .then((res) => {
                 if (res.status === 200) {
                     setOriginSecs();
@@ -133,7 +133,9 @@ const Content = ({ form, playlistId, playlist }) => {
 
     const handleDelete = (index) => {
         API.playlists
-            .removeFile(playlistId, { file_id: form.values.files[index].pfid })
+            .removeFile(playlistId, {
+                pfid: form.values.files[index].pfid,
+            })
             .then((res) => {
                 if (res.status === 200) {
                     form.removeListItem('files', index);
