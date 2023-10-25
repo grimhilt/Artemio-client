@@ -15,6 +15,7 @@ import MediaPlayer from '../../components/media-player';
 import { isVideo } from '../../tools/fileUtil';
 
 const DEFAULT_FILE_TIME = 2;
+const INCREMENT_POSITION = 100;
 
 const Content = ({ form, playlistId, playlist }) => {
     const [fileSelector, setFileSelector] = useState(false);
@@ -36,22 +37,21 @@ const Content = ({ form, playlistId, playlist }) => {
         let formFiles = form.values.files;
         let max_position = formFiles[formFiles.length - 1]?.position ?? 0;
         files.forEach((file) => {
-            max_position++;
-
+            max_position += INCREMENT_POSITION;
             file.position = max_position;
             file.seconds = DEFAULT_FILE_TIME;
-            const index = form.values.files.length;
-            form.insertListItem('files', file);
             API.playlists
                 .addFile(playlistId, { position: file.position, file_id: file.id, seconds: file.seconds })
                 .then((res) => {
                     if (res.status !== 200) {
                         setNotification(true, `Error when adding file (${res.status})`);
+                    } else {
+                        file.pfid = res.data.pfid;
+                        form.insertListItem('files', file);
                     }
                 })
                 .catch((err) => {
-                    console.log('here');
-                    form.removeListItem('files', index);
+                    // form.removeListItem('files', index);
                     setNotification(true, err);
                 });
         });
@@ -59,13 +59,15 @@ const Content = ({ form, playlistId, playlist }) => {
 
     const changePositionValue = (from, to) => {
         return new Promise((resolve, reject) => {
+            if (from == to)
+                resolve(true);
             const formFiles = form.values.files;
-            let below_position = to === 0 ? 0 : formFiles[to].position;
+            let below_position = to === 0 ? 0 : formFiles[to - 1].position;
             let above_position = formFiles[to].position;
             if (to > from) {
                 if (to === formFiles.length - 1) {
                     // last element so nothing above
-                    above_position = formFiles.length + 1;
+                    above_position = formFiles[to].position + INCREMENT_POSITION;
                 } else {
                     // not last to taking element above
                     above_position = formFiles[to + 1].position;
@@ -78,6 +80,7 @@ const Content = ({ form, playlistId, playlist }) => {
                 .changeOrder(playlistId, { pfid: formFiles[from].pfid, position: newPosition })
                 .then((res) => {
                     if (res.status === 200) {
+                        formFiles[from].position = newPosition;
                         resolve(true);
                     } else {
                         setNotification(true, `Error when changing order (${res.status})`);
